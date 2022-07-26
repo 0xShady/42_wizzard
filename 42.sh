@@ -12,7 +12,7 @@ function 42_clean() {
     STORAGE_AVAILABLE=$(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B')
     echo -e " • Free storage before cleaning: $STORAGE_AVAILABLE"
 
-    /bin/rm -rf "$HOME"/.Trash/* 2&>1 /dev/null
+    /bin/rm -rf -force "$HOME"/.Trash/* 2&>1 /dev/null
     /bin/rm -rf "$HOME"/Library/*.42* 2&>1 /dev/null
     /bin/rm -rf "$HOME"/*.42* 2&>1 /dev/null
     /bin/chmod -R 777 "$HOME"/Library/Caches/Homebrew 2&>1 /dev/null
@@ -88,13 +88,13 @@ function 42_docker() {
         echo ""
     fi
     pkill Docker
-    unlink ~/Library/Containers/com.docker.docker 2&>1/dev/null
-    unlink ~/Library/Containers/com.docker.helper 2&>1/dev/null
+    unlink ~/Library/Containers/com.docker.docker 2&>1 /dev/null
+    unlink ~/Library/Containers/com.docker.helper 2&>1 /dev/null
+    unlink ~/.docker 2&>1 /dev/null
+    unlink ~/Library/Containers/com.docker.docker 2&>1 /dev/null
+    unlink ~/Library/Containers/com.docker.helper 2&>1 /dev/null
     unlink ~/.docker 2&>1/dev/null
-    unlink ~/Library/Containers/com.docker.docker 2&>1/dev/null
-    unlink ~/Library/Containers/com.docker.helper 2&>1/dev/null
-    unlink ~/.docker 2&>1/dev/null
-    rm -rf ~/Library/Containers/com.docker.{docker,helper} ~/.docker 2&>1/dev/null
+    rm -rf ~/Library/Containers/com.docker.{docker,helper} ~/.docker 2&>1 /dev/null
     mkdir -p "$docker_destination"/{com.docker.{docker,helper},.docker}
     ln -sf "$docker_destination"/com.docker.docker ~/Library/Containers/com.docker.docker
     ln -sf "$docker_destination"/com.docker.helper ~/Library/Containers/com.docker.helper
@@ -209,11 +209,11 @@ function 42() {
         ;;
         "-oh-my-zsh") 42_oh_my_zsh
         ;;
+        "-ds-store") 42_ds_store
+        ;;
         "-reset") 42_reset
         ;;
         "-help") 42_help
-        ;;
-        "-ds-store") 42_ds_store
         ;;
         *) echo 42: "Unknown command: $1" ; 42_help
         ;;
