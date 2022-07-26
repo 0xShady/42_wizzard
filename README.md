@@ -17,17 +17,17 @@ curl -fsSL https://raw.githubusercontent.com/0xShady/42_wizzard/main/installer.s
 
 | Commands | Functionalities | 
 | --------------- | --------------- 
-| ```-clean:``` | Cleans your session |
-| ```-storage:``` | Shows storaage stats |
-| ```-brew:``` | Install brew without permessions |
-| ```-docker:``` | Install docker in desired directory |
-| ```-code:``` | Add the code command to your zsh |
-| ```-ssh:``` | Generates ssh key and copies it toy your clipboard |
-| ```-nvm:``` | Install nvm |
-| ```-node:``` | Install node + npm |
-| ```-oh-my-zsh:``` | Install oh-my-zsh |
-| ```-reset:``` |Resets your session |
-| ```-help:``` | Shows the list of valid commands |
+| ```-clean``` | Cleans your session |
+| ```-storage``` | Shows storaage stats |
+| ```-brew``` | Install brew without permessions |
+| ```-docker``` | Install docker in desired directory |
+| ```-code``` | Add the code command to your zsh |
+| ```-ssh``` | Generates ssh key and copies it toy your clipboard |
+| ```-nvm``` | Install nvm |
+| ```-node``` | Install node + npm |
+| ```-oh-my-zsh``` | Install oh-my-zsh |
+| ```-reset``` |Resets your session |
+| ```-help``` | Shows the list of valid commands |
 
 ## How to use
 
