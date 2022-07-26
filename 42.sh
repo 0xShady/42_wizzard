@@ -8,21 +8,22 @@ MAGENTA="\e[1;35m"
 CYAN="\e[1;36m"
 
 function 42_clean() {
+
     STORAGE_AVAILABLE=$(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B')
     echo -e "       • Free storage before cleaning: $STORAGE_AVAILABLE"
 
-    /bin/rm -rf "$HOME"/.Trash/* &>/dev/null
-    /bin/rm -rf "$HOME"/Library/*.42* &>/dev/null
-    /bin/rm -rf "$HOME"/*.42* &>/dev/null
-    /bin/chmod -R 777 "$HOME"/Library/Caches/Homebrew &>/dev/null
-    /bin/rm -rf "$HOME"/Library/Caches/* &>/dev/null
-    /bin/rm -rf "$HOME"/Library/Application\ Support/Caches/* &>/dev/null
-    /bin/rm -rf "$HOME"/Library/Application\ Support/Slack/Service\ Worker/CacheStorage/* &>/dev/null
-    /bin/rm -rf "$HOME"/Library/Application\ Support/Code/User/workspaceStorage/* &>/dev/null
-    /bin/rm -rf "$HOME"/Library/Application\ Support/discord/Cache/* &>/dev/null
-    /bin/rm -rf "$HOME"/Library/Application\ Support/discord/Code\ Cache/js* &>/dev/null
-    /bin/rm -rf "$HOME"/Library/Application\ Support/Google/Chrome/Default/Service\ Worker/CacheStorage/* &>/dev/null
-    /bin/rm -rf "$HOME"/Library/Application\ Support/Google/Chrome/Default/Application\ Cache/* &>/dev/null
+    /bin/rm -rf "$HOME"/.Trash/* 2&>1 /dev/null
+    /bin/rm -rf "$HOME"/Library/*.42* 2&>1 /dev/null
+    /bin/rm -rf "$HOME"/*.42* 2&>1 /dev/null
+    /bin/chmod -R 777 "$HOME"/Library/Caches/Homebrew 2&>1 /dev/null
+    /bin/rm -rf "$HOME"/Library/Caches/* 2&>1 /dev/null
+    /bin/rm -rf "$HOME"/Library/Application\ Support/Caches/* 2&>1 /dev/null
+    /bin/rm -rf "$HOME"/Library/Application\ Support/Slack/Service\ Worker/CacheStorage/* 2&>1 /dev/null
+    /bin/rm -rf "$HOME"/Library/Application\ Support/Code/User/workspaceStorage/* 2&>1 /dev/null
+    /bin/rm -rf "$HOME"/Library/Application\ Support/discord/Cache/* 2&>1 /dev/null
+    /bin/rm -rf "$HOME"/Library/Application\ Support/discord/Code\ Cache/js* 2&>1 /dev/null
+    /bin/rm -rf "$HOME"/Library/Application\ Support/Google/Chrome/Default/Service\ Worker/CacheStorage/* 2&>1 /dev/null
+    /bin/rm -rf "$HOME"/Library/Application\ Support/Google/Chrome/Default/Application\ Cache/* 2&>1 /dev/null
 
     STORAGE_AVAILABLE=$(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B')
     echo -e "       • Free storage after cleaning: $STORAGE_AVAILABLE"
@@ -36,6 +37,7 @@ function 42_storage() {
 }
 
 function 42_brew() {
+
     rm -rf $HOME/.brew
     git clone --depth=1 https://github.com/Homebrew/brew $HOME/.brew
     cat > $HOME/.brewconfig.zsh <<EOL
@@ -58,7 +60,6 @@ function 42_brew() {
         fi
     fi
 EOL
-
     if ! grep -q "# Load Homebrew config script" $HOME/.zshrc
         then
         cat >> $HOME/.zshrc <<EOL
@@ -77,15 +78,22 @@ function 42_docker() {
         then
         docker_destination="/goinfre/$USER/docker"
     fi
-    brew uninstall -f docker docker-compose docker-machine &>/dev/null
+    brew uninstall -f docker docker-compose docker-machine 2&>1/dev/null
+    if [ ! -d "/Applications/Docker.app" ] && [ ! -d "~/Applications/Docker.app" ]; then
+        printf  "$YELLOW Docker is not installe $RESET dplease install docker trough Managed Software Center"
+        sleep 5
+        open -a "Managed Software Center"
+        read -n1 -p "$BLUE Press RETURN when you have successfully installed Docker${reset}"
+        echo ""
+    fi
     pkill Docker
-    unlink ~/Library/Containers/com.docker.docker &>/dev/null
-    unlink ~/Library/Containers/com.docker.helper &>/dev/null
-    unlink ~/.docker &>/dev/null
-    unlink ~/Library/Containers/com.docker.docker &>/dev/null
-    unlink ~/Library/Containers/com.docker.helper &>/dev/null
-    unlink ~/.docker &>/dev/null
-    rm -rf ~/Library/Containers/com.docker.{docker,helper} ~/.docker &>/dev/null
+    unlink ~/Library/Containers/com.docker.docker 2&>1/dev/null
+    unlink ~/Library/Containers/com.docker.helper 2&>1/dev/null
+    unlink ~/.docker 2&>1/dev/null
+    unlink ~/Library/Containers/com.docker.docker 2&>1/dev/null
+    unlink ~/Library/Containers/com.docker.helper 2&>1/dev/null
+    unlink ~/.docker 2&>1/dev/null
+    rm -rf ~/Library/Containers/com.docker.{docker,helper} ~/.docker 2&>1/dev/null
     mkdir -p "$docker_destination"/{com.docker.{docker,helper},.docker}
     ln -sf "$docker_destination"/com.docker.docker ~/Library/Containers/com.docker.docker
     ln -sf "$docker_destination"/com.docker.helper ~/Library/Containers/com.docker.helper
@@ -96,15 +104,16 @@ function 42_docker() {
 function 42_code() {
     echo 'code () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;}' >> $HOME/.zshrc
     source $HOME/.zshrc
+    printf $GREEN "Code command added" $RESET
 }
 
 function 42_ssh() {
+    rm -rf $HOME/.ssh
     ssh-keygen -C "" -f ~/.ssh/id_rsa -N "" 2&>1 >/dev/null
     cat ~/.ssh/id_rsa.pub | awk '{print($2)}' | pbcopy
     echo $GREEN"SSH key copied to clipboard"$RESET
     echo you can add it to your intranet account trought the following link:
     echo The following link will be opend in 5 secondes $BLUE"https://profile.intra.42.fr/gitlab_users"$RESET
-    sleep 5
     open https://profile.intra.42.fr/gitlab_users
 }
 
@@ -137,6 +146,7 @@ function 42_reset() {
     if [ "$answer" = "yes" ]
         then
         touch $HOME/.reset
+        osascript -e 'tell application "loginwindow" to  «event aevtrlgo»'
     else
         echo $YELLOW"Aborting"
     fi
