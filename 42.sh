@@ -8,7 +8,6 @@ MAGENTA="\e[1;35m"
 CYAN="\e[1;36m"
 
 function 42_clean() {
-
     STORAGE_AVAILABLE=$(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B')
     echo -e "       • Free storage before cleaning: $STORAGE_AVAILABLE"
 

@@ -3,4 +3,4 @@ curl https://raw.githubusercontent.com/0xShady/42_wizzard/main/42.sh?token=GHSAT
 chmod +x .42-wizzard.sh
 echo "source .42-wizzard.sh" >> ~/.zshrc
 echo "source ~/.zshrc" | zsh
-echo "42 wizzard installed"
+echo "\e[1;32m" "42 wizzard installed" "\033[0m"
