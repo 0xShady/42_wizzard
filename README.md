@@ -26,6 +26,7 @@ curl -fsSL https://raw.githubusercontent.com/0xShady/42_wizzard/main/installer.s
 | ```-nvm``` | Install nvm |
 | ```-node``` | Install node + npm |
 | ```-oh-my-zsh``` | Install oh-my-zsh |
+| ```-ds-store``` | remove .DS_Store files + prevent os from creating them |
 | ```-reset``` |Resets your session |
 | ```-help``` | Shows the list of valid commands |
 
@@ -49,6 +50,7 @@ output:
  -nvm         install nvm
  -node        install node
  -oh-my-zsh   install oh-my-zsh
+ -ds-store    remove .DS_Store files + prevent os from creating them
  -reset       reset your session
  -help        show this help
 ```

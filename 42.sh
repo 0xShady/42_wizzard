@@ -184,6 +184,7 @@ function 42_help() {
     echo -e $GREEN" -nvm $RESET        install nvm"
     echo -e $GREEN" -node $RESET       install node"
     echo -e $GREEN" -oh-my-zsh $RESET  install oh-my-zsh"
+    echo -e $GREEN" -ds-store $RESET   remove .DS_Store files + prevent os from creating them"
     echo -e $GREEN" -reset $RESET      reset your session"
     echo -e $GREEN" -help $RESET       show this help"
 }
