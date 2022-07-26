@@ -10,7 +10,7 @@ CYAN="\e[1;36m"
 function 42_clean() {
 
     STORAGE_AVAILABLE=$(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B')
-    echo -e "       • Free storage before cleaning: $STORAGE_AVAILABLE"
+    echo -e " • Free storage before cleaning: $STORAGE_AVAILABLE"
 
     /bin/rm -rf "$HOME"/.Trash/* 2&>1 /dev/null
     /bin/rm -rf "$HOME"/Library/*.42* 2&>1 /dev/null
@@ -26,14 +26,14 @@ function 42_clean() {
     /bin/rm -rf "$HOME"/Library/Application\ Support/Google/Chrome/Default/Application\ Cache/* 2&>1 /dev/null
 
     STORAGE_AVAILABLE=$(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B')
-    echo -e "       • Free storage after cleaning: $STORAGE_AVAILABLE"
+    echo -e " • Free storage after cleaning: $STORAGE_AVAILABLE"
 }
 
 function 42_storage() {
 
-    echo -e "$BLUE   • Total storage: $(df -h | grep "$USER" | awk '{print($2)}' | tr 'i' 'B') $RESET"
-    echo -e "$RED   • Used storage:  $(df -h | grep "$USER" | awk '{print($3)}' | tr 'i' 'B') $RESET"
-    echo -e "$GREEN   • Available storage:  $(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B') $RESET"
+    echo -e "$BLUE • Total storage: $(df -h | grep "$USER" | awk '{print($2)}' | tr 'i' 'B') $RESET"
+    echo -e "$RED • Used storage:  $(df -h | grep "$USER" | awk '{print($3)}' | tr 'i' 'B') $RESET"
+    echo -e "$GREEN • Available storage:  $(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B') $RESET"
 }
 
 function 42_brew() {
@@ -41,6 +41,7 @@ function 42_brew() {
     rm -rf $HOME/.brew
     git clone --depth=1 https://github.com/Homebrew/brew $HOME/.brew
     cat > $HOME/.brewconfig.zsh <<EOL
+    # Load Homebrew config script
     export PATH=\$HOME/.brew/bin:\$PATH
     export HOMEBREW_CACHE=/tmp/\$USER/Homebrew/Caches
     export HOMEBREW_TEMP=/tmp/\$USER/Homebrew/Temp
@@ -166,6 +167,10 @@ function 42_help() {
     echo -e $GREEN" -help: $RESET       show this help"
 }
 
+function 42_test() {
+    sleep 5
+}
+
 function 42() {
     case $1 in
         "-clean") 42_clean 
@@ -189,6 +194,8 @@ function 42() {
         "-reset") 42_reset
         ;;
         "-help") 42_help
+        ;;
+        "-test") ./run_with_loading.sh 42_test
         ;;
         *) echo 42: "Unknown command: $1" ; 42_help
         ;;
