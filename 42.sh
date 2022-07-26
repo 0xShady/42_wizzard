@@ -154,7 +154,7 @@ function 42_reset() {
 }
 
 function 42_help() {
-    echo -e $GREEN" -clean: $RESET      clean your computer"
+    echo -e $GREEN" -clean: $RESET      clean your session"
     echo -e $GREEN" -storage: $RESET    show your storage"
     echo -e $GREEN" -brew: $RESET       install brew"
     echo -e $GREEN" -docker: $RESET     install docker"
