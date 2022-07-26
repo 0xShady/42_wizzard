@@ -154,17 +154,17 @@ function 42_reset() {
 }
 
 function 42_help() {
-    echo -e $GREEN" -clean: $RESET      clean your session"
-    echo -e $GREEN" -storage: $RESET    show your storage"
-    echo -e $GREEN" -brew: $RESET       install brew"
-    echo -e $GREEN" -docker: $RESET     install docker"
-    echo -e $GREEN" -code: $RESET       add code command to your zsh"
-    echo -e $GREEN" -ssh: $RESET        generate ssh key"
-    echo -e $GREEN" -nvm: $RESET        install nvm"
-    echo -e $GREEN" -node: $RESET       install node"
-    echo -e $GREEN" -oh-my-zsh: $RESET  install oh-my-zsh"
-    echo -e $GREEN" -reset: $RESET      reset your session"
-    echo -e $GREEN" -help: $RESET       show this help"
+    echo -e $GREEN" -clean $RESET      clean your session"
+    echo -e $GREEN" -storage $RESET    show your storage"
+    echo -e $GREEN" -brew $RESET       install brew"
+    echo -e $GREEN" -docker $RESET     install docker"
+    echo -e $GREEN" -code $RESET       add code command to your zsh"
+    echo -e $GREEN" -ssh $RESET        generate ssh key"
+    echo -e $GREEN" -nvm $RESET        install nvm"
+    echo -e $GREEN" -node $RESET       install node"
+    echo -e $GREEN" -oh-my-zsh $RESET  install oh-my-zsh"
+    echo -e $GREEN" -reset $RESET      reset your session"
+    echo -e $GREEN" -help $RESET       show this help"
 }
 
 function 42_test() {

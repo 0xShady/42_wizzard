@@ -40,16 +40,16 @@ curl -fsSL https://raw.githubusercontent.com/0xShady/42_wizzard/main/installer.s
 output:
 
 ```bash 
- -clean:       clean your session
- -storage:     show your storage
- -brew:        install brew
- -docker:      install docker
- -code:        add code command to your zsh
- -ssh:         generate ssh key
- -nvm:         install nvm
- -node:        install node
- -oh-my-zsh:   install oh-my-zsh
- -reset:       reset your session
- -help:        show this help
+ -clean       clean your session
+ -storage     show your storage
+ -brew        install brew
+ -docker      install docker
+ -code        add code command to your zsh
+ -ssh         generate ssh key
+ -nvm         install nvm
+ -node        install node
+ -oh-my-zsh   install oh-my-zsh
+ -reset       reset your session
+ -help        show this help
 ```
 
