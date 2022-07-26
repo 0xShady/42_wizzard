@@ -7,6 +7,20 @@ BLUE="\e[1;34m"
 MAGENTA="\e[1;35m"
 CYAN="\e[1;36m"
 
+function 42_updat() {
+    curl -fsSL https://raw.githubusercontent.com/0xShady/42_wizzard/main/42.sh > $HOME/.tmp_wizzard
+    if [ "" == "$(diff "$HOME"/.tmp_wizzard "$HOME"/.42-wizzard.sh)" ]; then
+        printf "\e[1;32m 42 wizzard is up to date\n \033[0m"
+        rm "$HOME"/.tmp_wizzard
+    else
+        mv "$HOME"/.tmp_wizzard "$HOME"/.42-wizzard.sh
+        chmod +x "$HOME"/.42-wizzard.sh
+        printf "\e[1;32m 42 wizzard updated\n \033[0m"
+    fi
+    source "$HOME"/.42-wizzard.sh
+    source "$HOME"/.zshrc
+}
+
 function 42_clean() {
 
     STORAGE_AVAILABLE=$(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B')
