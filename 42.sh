@@ -153,6 +153,27 @@ function 42_reset() {
     fi
 }
 
+function 42_ds_store () {
+    echo $YELLOW"Are you sure you want to remove .DS_Store files? $RESET (yes/no)"
+    read -r answer
+    if [ "$answer" = "yes" ]
+        then
+        cd $HOME
+        find . -name .DS_Store -delete 2&>1 >/dev/null
+    else
+        echo $YELLOW"Aborting"
+    fi
+    echo $YELLOW"Are you sure you want to prevent your os from creating .DS_Store files? $RESET (yes/no)"
+    read -r answer
+    if [ "$answer" = "yes" ]
+        then
+        defaults write com.apple.desktopservices DSDontWriteNetworkStores true
+    else
+        echo $YELLOW"Aborting"
+    fi
+    cd - 2&>1 >/dev/null
+}
+
 function 42_help() {
     echo -e $GREEN" -clean $RESET      clean your session"
     echo -e $GREEN" -storage $RESET    show your storage"
@@ -165,10 +186,6 @@ function 42_help() {
     echo -e $GREEN" -oh-my-zsh $RESET  install oh-my-zsh"
     echo -e $GREEN" -reset $RESET      reset your session"
     echo -e $GREEN" -help $RESET       show this help"
-}
-
-function 42_test() {
-    sleep 5
 }
 
 function 42() {
@@ -195,7 +212,7 @@ function 42() {
         ;;
         "-help") 42_help
         ;;
-        "-test") ./run_with_loading.sh 42_test
+        "-ds-store") 42_ds_store
         ;;
         *) echo 42: "Unknown command: $1" ; 42_help
         ;;
