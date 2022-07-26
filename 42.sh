@@ -7,7 +7,7 @@ BLUE="\e[1;34m"
 MAGENTA="\e[1;35m"
 CYAN="\e[1;36m"
 
-function 42_updat() {
+function 42_update() {
     curl -fsSL https://raw.githubusercontent.com/0xShady/42_wizzard/main/42.sh > $HOME/.tmp_wizzard
     if [ "" == "$(diff "$HOME"/.tmp_wizzard "$HOME"/.42-wizzard.sh)" ]; then
         printf "\e[1;32m 42 wizzard is up to date\n \033[0m"
@@ -226,6 +226,8 @@ function 42() {
         "-ds-store") 42_ds_store
         ;;
         "-reset") 42_reset
+        ;;
+        "-update") 42_update
         ;;
         "-help") 42_help
         ;;
