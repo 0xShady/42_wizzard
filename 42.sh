@@ -217,7 +217,7 @@ function 42_help() {
 
 function 42() {
     case $1 in
-        "-clean") 42_clean 
+        "-clean") 42_clean
         ;;
         "-storage") 42_storage
         ;;
