@@ -9,20 +9,21 @@ CYAN="\e[1;36m"
 
 function 42_update() {
     curl -fsSL https://raw.githubusercontent.com/0xShady/42_wizzard/main/42.sh > $HOME/.tmp_wizzard
-    if [ "" == "$(diff "$HOME"/.tmp_wizzard "$HOME"/.42-wizzard.sh)" ]; then
-        printf "\e[1;32m 42 wizzard is up to date\n \033[0m"
-        rm "$HOME"/.tmp_wizzard
+    diff $HOME/.tmp_wizzard $HOME/.42-wizzard.sh 2&>1 /dev/null
+    if [ $? == 0 ];
+    then
+        printf "$GREEN 42 wizzard is up to date\n $RESET"
+        rm $HOME/.tmp_wizzard
     else
-        mv "$HOME"/.tmp_wizzard "$HOME"/.42-wizzard.sh
-        chmod +x "$HOME"/.42-wizzard.sh
-        printf "\e[1;32m 42 wizzard updated\n \033[0m"
+        mv $HOME/.tmp_wizzard $HOME/.42-wizzard.sh
+        chmod +x $HOME/.42-wizzard.sh
+        printf "$GREEN 42 wizzard updated\n $RESET"
     fi
     source "$HOME"/.42-wizzard.sh
     source "$HOME"/.zshrc
 }
 
 function 42_clean() {
-
     STORAGE_AVAILABLE=$(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B')
     echo -e " • Free storage before cleaning: $STORAGE_AVAILABLE"
 
@@ -44,14 +45,12 @@ function 42_clean() {
 }
 
 function 42_storage() {
-
     echo -e "$BLUE • Total storage: $(df -h | grep "$USER" | awk '{print($2)}' | tr 'i' 'B') $RESET"
     echo -e "$RED • Used storage:  $(df -h | grep "$USER" | awk '{print($3)}' | tr 'i' 'B') $RESET"
     echo -e "$GREEN • Available storage:  $(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B') $RESET"
 }
 
 function 42_brew() {
-
     rm -rf $HOME/.brew
     git clone --depth=1 https://github.com/Homebrew/brew $HOME/.brew
     cat > $HOME/.brewconfig.zsh <<EOL
@@ -108,7 +107,7 @@ function 42_docker() {
     unlink ~/Library/Containers/com.docker.docker 2&>1 /dev/null
     unlink ~/Library/Containers/com.docker.helper 2&>1 /dev/null
     unlink ~/.docker 2&>1/dev/null
-    rm -rf ~/Library/Containers/com.docker.{docker,helper} ~/.docker 2&>1 /dev/null
+    /bin/rm -rf ~/Library/Containers/com.docker.{docker,helper} ~/.docker 2&>1 /dev/null
     mkdir -p "$docker_destination"/{com.docker.{docker,helper},.docker}
     ln -sf "$docker_destination"/com.docker.docker ~/Library/Containers/com.docker.docker
     ln -sf "$docker_destination"/com.docker.helper ~/Library/Containers/com.docker.helper
@@ -119,22 +118,25 @@ function 42_docker() {
 function 42_code() {
     echo 'code () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;}' >> $HOME/.zshrc
     source $HOME/.zshrc
-    printf $GREEN "Code command added" $RESET
+    printf $GREEN "You can use the code command now" $RESET
 }
 
 function 42_ssh() {
-    rm -rf $HOME/.ssh
+    /bin/rm -rf $HOME/.ssh
     ssh-keygen -C "" -f ~/.ssh/id_rsa -N "" 2&>1 >/dev/null
     cat ~/.ssh/id_rsa.pub | awk '{print($2)}' | pbcopy
-    echo $GREEN"SSH key copied to clipboard"$RESET
-    echo you can add it to your intranet account trought the following link:
-    echo The following link will be opend in 5 secondes $BLUE"https://profile.intra.42.fr/gitlab_users"$RESET
+    printf "$GREEN SSH key copied to clipboard $RESET \n"
+    printf "you can add it to your intranet account trought the following link: $BLUE (link will be oppend in 5 sec...) $RESET \n"
+    printf "$BLUE https://profile.intra.42.fr/gitlab_users $RESET"
+    sleep 5
     open https://profile.intra.42.fr/gitlab_users
 }
 
 function 42_nvm() {
     curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | zsh
     source $HOME/.nvm/nvm.sh
+    NVM_VERSION=$(nvm --version)
+    printf "nvm $GREEN v$NVM_VERSION $RESET installed\n"
 }
 
 function 42_node() {
@@ -142,9 +144,13 @@ function 42_node() {
         then
         nvm install node
     else
-        echo "installing nvm first"
+        printf "Installing nvm first..."
         42_nvm
         nvm install node
+        NODE_VERSION=$(node --version)
+        NPM_VERSION=$(npm --version)
+        printf "node $GREEN v$NODE_VERSION $RESET installed\n"
+        printf "npm $GREEN v$NPM_VERSION $RESET installed\n"
     fi
 }
 
