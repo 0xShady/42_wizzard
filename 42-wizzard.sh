@@ -193,7 +193,7 @@ function 42-wizzard-help() {
 	printf "42-wizzard$GREEN v$VERSION $RESET \n"
 	if[$USER -eq "oel-yous"]
 		then
-		printf "Oummixa!! \n"
+		printf "hey Oummixa!! \n"
 	fi
 	printf "$GREEN		-clean -c $RESET				Clean your session. \n"
 	printf "$GREEN		-storage -s $RESET				Show your storage. \n"
@@ -208,12 +208,6 @@ function 42-wizzard-help() {
 	printf "$GREEN		-reset $RESET					Reset your session. \n"
 	printf "$GREEN		-update -u $RESET				Update your the wizzard. \n"
 	printf "$GREEN		-help -h $RESET					Show this help. \n"
-}
-
-function 42-wizzard-test() {
-	BLA::start_loading_animation "${BLA_metro[@]}" 2> /dev/null
-	sleep 5
-	BLA::stop_loading_animation 2> /dev/null
 }
 
 function 42() {
@@ -243,8 +237,6 @@ function 42() {
 		-update|-u) sh ~/.42-wizzard-updater.sh
 		;;
 		-help|-h) 42-wizzard-help
-		;;
-		-test) 42-wizzard-test
 		;;
 		*) echo 42: "Unknown command: $1" ; 42-wizzard-help
 		;;
