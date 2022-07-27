@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 curl -fsSL https://raw.githubusercontent.com/0xShady/42_wizzard/main/42-wizzard.sh > $HOME/.tmp-wizzard
-diff $HOME/.tmp-wizzard $HOME/.42-wizzard.sh
+diff $HOME/.tmp-wizzard $HOME/.42-wizzard.sh > /dev/null 2>&1
 if [ $? -eq 0 ];
 then
 	printf "$GREEN 42 wizzard is up to date\n $RESET"
