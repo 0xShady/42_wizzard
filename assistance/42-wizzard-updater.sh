@@ -12,4 +12,3 @@ else
 	printf "42 wizzard updated \n"
 fi
 source $HOME/.42-wizzard.sh
-source $HOME/.zshrc
