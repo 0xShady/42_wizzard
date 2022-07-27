@@ -5,7 +5,7 @@ diff $HOME/.tmp-wizzard $HOME/.42-wizzard.sh
 if [ $? == 0 ];
 then
 	printf "$GREEN 42 wizzard is up to date\n $RESET"
-	rm ~/.tmp_wizzard
+	rm ~/.tmp-wizzard
 else
 	mv ~/.tmp-wizzard $HOME/.42-wizzard.sh
 	chmod +x $HOME/.42-wizzard.sh
