@@ -8,7 +8,7 @@ The set of tools you don't you don't know you need it.
 </br>
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/0xShady/42_wizzard/main/installer.sh | zsh && source ~/.zshrc
+curl -fsSL https://raw.githubusercontent.com/0xShady/42_wizzard/main/assistance/42-wizzard-installer.sh | zsh && source ~/.zshrc
 ```
 
 ## Usage
