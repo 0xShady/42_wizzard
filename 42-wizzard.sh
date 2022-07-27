@@ -191,19 +191,19 @@ function 42-wizzard-ds-store () {
 
 function 42-wizzard-help() {
 	printf "42-wizzard$GREEN v$VERSION $RESET \n"
-	printf "$GREEN		-clean -c $RESET		Clean your session. \n"
-	printf "$GREEN		-storage -s $RESET		Show your storage. \n"
-	printf "$GREEN		-brew $RESET			Install brew. \n"
-	printf "$GREEN		-docker $RESET			Install docker. \n"
-	printf "$GREEN		-code $RESET			Add code command to your zsh. \n"
-	printf "$GREEN		-ssh $RESET				Generate ssh key. \n"
-	printf "$GREEN		-nvm $RESET				Install nvm. \n"
-	printf "$GREEN		-node $RESET			Install node. \n"
-	printf "$GREEN		-oh-my-zsh -omz $RESET	Install oh-my-zsh. \n"
-	printf "$GREEN		-ds-store $RESET		Remove .DS_Store files + prevent os from creating them. \n"
-	printf "$GREEN		-reset $RESET			Reset your session. \n"
-	printf "$GREEN		-update -u $RESET		Update your the wizzard. \n"
-	printf "$GREEN		-help -h $RESET			Show this help. \n"
+	printf "$GREEN		-clean -c $RESET				Clean your session. \n"
+	printf "$GREEN		-storage -s $RESET				Show your storage. \n"
+	printf "$GREEN		-brew $RESET					Install brew. \n"
+	printf "$GREEN		-docker $RESET					Install docker. \n"
+	printf "$GREEN		-code $RESET					Add code command to your zsh. \n"
+	printf "$GREEN		-ssh $RESET						Generate ssh key. \n"
+	printf "$GREEN		-nvm $RESET						Install nvm. \n"
+	printf "$GREEN		-node $RESET					Install node. \n"
+	printf "$GREEN		-oh-my-zsh -omz $RESET			Install oh-my-zsh. \n"
+	printf "$GREEN		-ds-store $RESET				Remove .DS_Store files + prevent os from creating them. \n"
+	printf "$GREEN		-reset $RESET					Reset your session. \n"
+	printf "$GREEN		-update -u $RESET				Update your the wizzard. \n"
+	printf "$GREEN		-help -h $RESET					Show this help. \n"
 }
 
 function 42-wizzard-test() {
@@ -213,8 +213,6 @@ function 42-wizzard-test() {
 }
 
 function 42() {
-	source ~/Desktop/bash_loading_animations/bash_loading_animations.sh
-	trap BLA::stop_loading_animation SIGINT
 	case $1 in
 		-clean|-c) 42-wizzard-clean 2> /dev/null 
 		;;
