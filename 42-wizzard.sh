@@ -1,3 +1,4 @@
+#!/bin/zsh
 
 RESET="\033[0m"
 RED="\e[1;31m"
@@ -25,9 +26,9 @@ function 42_update() {
 
 function 42_clean() {
     STORAGE_AVAILABLE=$(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B')
-    printf " • Free storage before cleaning: $STORAGE_AVAILABLE \n"
-
-    /bin/rm -rf -force $HOME/.Trash/* > /dev/null 2>&1
+    printf "• Free storage before cleaning:$GREEN $STORAGE_AVAILABLE $RESET \n"
+    printf "$BLUE Cleaning... $RESET \n"
+    /bin/rm -rf $HOME/.Trash/* > /dev/null 2>&1
     /bin/rm -rf $HOME/Library/*.42* > /dev/null 2>&1
     /bin/rm -rf $HOME/*.42* > /dev/null 2>&1
     /bin/chmod -R 777 $HOME/Library/Caches/Homebrew > /dev/null 2>&1
@@ -41,20 +42,20 @@ function 42_clean() {
     /bin/rm -rf $HOME/Library/Application\ Support/Google/Chrome/Default/Application\ Cache/* > /dev/null 2>&1
 
     STORAGE_AVAILABLE=$(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B')
-    printf " • Free storage after cleaning: $STORAGE_AVAILABLE \n"
+    printf "• Free storage after cleaning:$GREEN $STORAGE_AVAILABLE $RESET \n"
 }
 
 function 42_storage() {
-    printf "$BLUE • Total storage: $(df -h | grep "$USER" | awk '{print($2)}' | tr 'i' 'B') $RESET \n"
-    printf "$RED • Used storage:  $(df -h | grep "$USER" | awk '{print($3)}' | tr 'i' 'B') $RESET \n"
-    printf "$GREEN • Available storage:  $(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B') $RESET \n"
+    printf "$BLUE• Total storage: $(df -h | grep "$USER" | awk '{print($2)}' | tr 'i' 'B') $RESET \n"
+    printf "$RED• Used storage:  $(df -h | grep "$USER" | awk '{print($3)}' | tr 'i' 'B') $RESET \n"
+    printf "$GREEN• Available storage:  $(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B') $RESET \n"
 }
 
 function 42_brew() {
     rm -rf $HOME/.brew
-    printf "$BLUE Clonning repo... $RESET"
+    printf "$BLUE Clonning repo... $RESET \n"
     git clone --depth=1 https://github.com/Homebrew/brew $HOME/.brew > /dev/null 2>&1
-    printf "$BLUE Building... $RESET"
+    printf "$BLUE Building... $RESET \n"
     cat > $HOME/.brewconfig.zsh <<EOL
     # Load Homebrew config script
     export PATH=\$HOME/.brew/bin:\$PATH
@@ -76,7 +77,7 @@ function 42_brew() {
         fi
     fi
 EOL
-    printf "$BLUE Configure... $RESET"
+    printf "$BLUE Configure... $RESET \n"
     if ! grep -q "# Load Homebrew config script" $HOME/.zshrc
         then
         cat >> $HOME/.zshrc <<EOL
@@ -99,12 +100,12 @@ function 42_docker() {
     fi
     brew uninstall -f docker docker-compose docker-machine > /dev/null 2>&1
     if [ ! -d "/Applications/Docker.app" ] && [ ! -d "~/Applications/Docker.app" ]; then
-        printf  "$YELLOW Docker is not installe $RESET dplease install docker trough Managed Software Center"
-        sleep 5
+        printf "$YELLOW Docker is not installed $RESET \n"
+        printf "Please install docker trough $BLUE Managed Software Center $RESET then hit enter to continue \n"
         open -a "Managed Software Center"
-        read -n1 -p "$BLUE Press RETURN when you have successfully installed Docker${reset}"
+        read -n 1
     fi
-    pkill Docker
+    pkill Docker 2> /dev/null
     unlink ~/Library/Containers/com.docker.docker > /dev/null 2>&1
     unlink ~/Library/Containers/com.docker.helper > /dev/null 2>&1
     unlink ~/.docker > /dev/null 2>&1
@@ -116,6 +117,7 @@ function 42_docker() {
     ln -sf "$docker_destination"/com.docker.docker ~/Library/Containers/com.docker.docker > /dev/null 2>&1
     ln -sf "$docker_destination"/com.docker.helper ~/Library/Containers/com.docker.helper > /dev/null 2>&1
     ln -sf "$docker_destination"/.docker ~/.docker > /dev/null 2>&1
+    printf "Docker installed in $GREEN $docker_destination $RESET \n"
     open -g -a Docker
 }
 
@@ -217,7 +219,7 @@ function 42_help() {
 
 function 42() {
     case $1 in
-        "-clean") 42_clean
+        "-clean") 42_clean 2> /dev/null 
         ;;
         "-storage") 42_storage
         ;;
