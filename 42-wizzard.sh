@@ -191,7 +191,8 @@ function 42-wizzard-ds-store () {
 
 function 42-wizzard-help() {
 	printf "42-wizzard$GREEN v$VERSION $RESET \n"
-	if[$USER -eq "oel-yous"]
+
+	if [ "$USER" = "oel-yous" ]
 		then
 		printf "hey Oummixa!! \n"
 	fi
