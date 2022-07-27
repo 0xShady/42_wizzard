@@ -206,7 +206,15 @@ function 42-wizzard-help() {
 	printf "$GREEN      -help -h $RESET   		Show this help. \n"
 }
 
+function 42-wizzard-test() {
+	BLA::start_loading_animation "${BLA_metro[@]}" 2> /dev/null
+	sleep 5
+	BLA::stop_loading_animation 2> /dev/null
+}
+
 function 42() {
+	source ~/Desktop/bash_loading_animations/bash_loading_animations.sh
+	trap BLA::stop_loading_animation SIGINT
 	case $1 in
 		-clean|-c) 42-wizzard-clean 2> /dev/null 
 		;;
@@ -233,6 +241,8 @@ function 42() {
 		-update|-u) sh ~/.42-wizzard-updater.sh
 		;;
 		-help|-h) 42-wizzard-help
+		;;
+		-test) 42-wizzard-test
 		;;
 		*) echo 42: "Unknown command: $1" ; 42-wizzard-help
 		;;
