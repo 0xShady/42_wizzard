@@ -191,6 +191,10 @@ function 42-wizzard-ds-store () {
 
 function 42-wizzard-help() {
 	printf "42-wizzard$GREEN v$VERSION $RESET \n"
+	if[$USER -eq "oel-yous"]
+		then
+		printf "Oummixa!! \n"
+	fi
 	printf "$GREEN		-clean -c $RESET				Clean your session. \n"
 	printf "$GREEN		-storage -s $RESET				Show your storage. \n"
 	printf "$GREEN		-brew $RESET					Install brew. \n"
