@@ -4,7 +4,7 @@ curl -fsSL https://raw.githubusercontent.com/0xShady/42_wizzard/main/42-wizzard.
 diff $HOME/.tmp-wizzard $HOME/.42-wizzard.sh
 if [ $? == 0 ];
 then
-	# printf "$GREEN 42 wizzard is up to date\n $RESET"
+	printf "$GREEN 42 wizzard is up to date\n $RESET"
 	rm $HOME/.tmp_wizzard
 else
 	mv $HOME/.tmp-wizzard $HOME/.42-wizzard.sh
