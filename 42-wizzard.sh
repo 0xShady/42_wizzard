@@ -9,26 +9,12 @@ MAGENTA="\e[1;35m"
 CYAN="\e[1;36m"
 VERSION="1.0.4"
 
-function 42-wizzard-update() {
-	curl -fsSL https://raw.githubusercontent.com/0xShady/42_wizzard/main/42-wizzard.sh > $HOME/.tmp_wizzard
-	diff $HOME/.tmp_wizzard $HOME/.42-wizzard.sh > /dev/null 2>&1
-	if [ $? == 0 ];
-	then
-		# printf "$GREEN 42 wizzard is up to date\n $RESET"
-		rm $HOME/.tmp_wizzard
-	else
-		mv $HOME/.tmp_wizzard $HOME/.42-wizzard.sh
-		chmod +x $HOME/.42-wizzard.sh
-		printf "$GREEN 42 wizzard updated\n $RESET"
-	fi
-	source $HOME/.42-wizzard.sh
-	source $HOME/.zshrc
-}
-
 function 42-wizzard-clean() {
 	STORAGE_AVAILABLE=$(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B')
 	printf "• Free storage before cleaning:$GREEN $STORAGE_AVAILABLE $RESET \n"
+
 	printf "$BLUE Cleaning... $RESET \n"
+
 	/bin/rm -rf $HOME/.Trash/* > /dev/null 2>&1
 	/bin/rm -rf $HOME/Library/*.42* > /dev/null 2>&1
 	/bin/rm -rf $HOME/*.42* > /dev/null 2>&1
@@ -205,19 +191,19 @@ function 42-wizzard-ds-store () {
 
 function 42-wizzard-help() {
 	printf "42-wizzard$GREEN v$VERSION $RESET \n"
-	printf "$GREEN      -clean -c $RESET    Clean your session. \n"
-	printf "$GREEN      -storage -s $RESET  Show your storage. \n"
-	printf "$GREEN      -brew $RESET        Install brew. \n"
-	printf "$GREEN      -docker $RESET      Install docker. \n"
-	printf "$GREEN      -code $RESET        Add code command to your zsh. \n"
-	printf "$GREEN      -ssh $RESET         Generate ssh key. \n"
-	printf "$GREEN      -nvm $RESET         Install nvm. \n"
-	printf "$GREEN      -node $RESET        Install node. \n"
-	printf "$GREEN      -oh-my-zsh $RESET   Install oh-my-zsh. \n"
-	printf "$GREEN      -ds-store $RESET    Remove .DS_Store files + prevent os from creating them. \n"
-	printf "$GREEN      -reset $RESET       Reset your session. \n"
-	printf "$GREEN      -update -u $RESET   Update your the wizzard. \n"
-	printf "$GREEN      -help -h $RESET     Show this help. \n"
+	printf "$GREEN      -clean -c $RESET    	Clean your session. \n"
+	printf "$GREEN      -storage -s $RESET  	Show your storage. \n"
+	printf "$GREEN      -brew $RESET        	Install brew. \n"
+	printf "$GREEN      -docker $RESET      	Install docker. \n"
+	printf "$GREEN      -code $RESET        	Add code command to your zsh. \n"
+	printf "$GREEN      -ssh $RESET         	Generate ssh key. \n"
+	printf "$GREEN      -nvm $RESET         	Install nvm. \n"
+	printf "$GREEN      -node $RESET        	Install node. \n"
+	printf "$GREEN      -oh-my-zsh -omz $RESET	Install oh-my-zsh. \n"
+	printf "$GREEN      -ds-store $RESET  		Remove .DS_Store files + prevent os from creating them. \n"
+	printf "$GREEN      -reset $RESET     		Reset your session. \n"
+	printf "$GREEN      -update -u $RESET 		Update your the wizzard. \n"
+	printf "$GREEN      -help -h $RESET   		Show this help. \n"
 }
 
 function 42() {
@@ -238,13 +224,13 @@ function 42() {
 		;;
 		-node) 42_node 2> /dev/null
 		;;
-		-oh-my-zsh) 42-wizzard-oh-my-zsh 2> /dev/null
+		-oh-my-zsh|omz) 42-wizzard-oh-my-zsh 2> /dev/null
 		;;
 		-ds-store) 42-wizzard-ds-store
 		;;
 		-reset) 42-wizzard-reset
 		;;
-		-update|-u) 42-wizzard-update
+		-update|-u) sh ~/.42-wizzard-updater.sh
 		;;
 		-help|-h) 42-wizzard-help
 		;;
