@@ -6,7 +6,7 @@ curl -fsSL https://raw.githubusercontent.com/0xShady/42_wizzard/main/assistance/
 chmod +x .42-wizzard.sh
 chmod +x .42-wizzard-updater.sh
 echo "source ~/.42-wizzard.sh" >> ~/.zshrc
-echo "42-wizzard-update" >> ~/.zshrc
+echo "sh ~/.42-wizzard-updater.sh" >> ~/.zshrc
 cd -
 printf "\e[1;32m 42 wizzard installed\n \033[0m"
 printf "run \e[1;32m 42 -help or -h \033[0m for more info \n"
