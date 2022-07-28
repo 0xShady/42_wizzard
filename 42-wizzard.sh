@@ -192,6 +192,7 @@ function 42-wizzard-ds-store () {
 function 42-wizzard-help() {
 	printf "42-wizzard$GREEN v$VERSION $RESET \n"
 
+	#big thanks to oummixa
 	if [ "$USER" = "oel-yous" ];
 		then
 		printf "hey Oummixa!! \n"
