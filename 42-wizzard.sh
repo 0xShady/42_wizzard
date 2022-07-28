@@ -9,6 +9,13 @@ MAGENTA="\e[1;35m"
 CYAN="\e[1;36m"
 VERSION="1.2.0"
 
+source ./assistance/42-wizzard-loading.sh
+trap BLA::stop_loading_animation SIGINT
+
+BLA::start_loading_animation "${BLA_metro[@]}"
+sleep 10
+BLA::stop_loading_animation 2> /dev/null
+
 function 42-wizzard-clean() {
 	STORAGE_AVAILABLE=$(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B')
 	printf "• Free storage before cleaning:$GREEN $STORAGE_AVAILABLE $RESET \n"
