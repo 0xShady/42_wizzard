@@ -1,5 +1,8 @@
 #!/bin/zsh
 
+BOLD=$(tput bold)
+UNDERLINE=$(tput smul)
+ITALIC=$(tput sitm)
 RESET="\033[0m"
 RED="\e[1;31m"
 GREEN="\e[1;32m"
@@ -10,11 +13,11 @@ CYAN="\e[1;36m"
 VERSION="1.2.0"
 
 source ./assistance/42-wizzard-loading.sh
-trap BLA::stop_loading_animation SIGINT
+trap stop_loading_animation SIGINT
 
-BLA::start_loading_animation "${BLA_metro[@]}"
+start_loading_animation "${classic[@]}"
 sleep 10
-BLA::stop_loading_animation 2> /dev/null
+stop_loading_animation
 
 function 42-wizzard-clean() {
 	STORAGE_AVAILABLE=$(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B')
