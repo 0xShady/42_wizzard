@@ -15,16 +15,17 @@ VERSION="1.2.0"
 source ./assistance/42-wizzard-loading.sh
 trap stop_loading_animation SIGINT
 
-start_loading_animation "${classic[@]}"
-sleep 10
+start_loading_animation "${waiting[@]}"
+read -n 1
 stop_loading_animation
 
 function 42-wizzard-clean() {
+	# displaying available storage before cleaning
 	STORAGE_AVAILABLE=$(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B')
 	printf "• Free storage before cleaning:$GREEN $STORAGE_AVAILABLE $RESET \n"
-
-	printf "$BLUE Cleaning... $RESET \n"
-
+	# start loading animation
+	start_loading_animation "${cleaning[@]}"
+	# cleaning
 	/bin/rm -rf $HOME/.Trash/* > /dev/null 2>&1
 	/bin/rm -rf $HOME/Library/*.42* > /dev/null 2>&1
 	/bin/rm -rf $HOME/*.42* > /dev/null 2>&1
@@ -37,22 +38,33 @@ function 42-wizzard-clean() {
 	/bin/rm -rf $HOME/Library/Application\ Support/discord/Code\ Cache/js* > /dev/null 2>&1
 	/bin/rm -rf $HOME/Library/Application\ Support/Google/Chrome/Default/Service\ Worker/CacheStorage/* > /dev/null 2>&1
 	/bin/rm -rf $HOME/Library/Application\ Support/Google/Chrome/Default/Application\ Cache/* > /dev/null 2>&1
-
+	# stop loading animation
+	stop_loading_animation
+	# displaying available storage after cleaning
 	STORAGE_AVAILABLE=$(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B')
 	printf "• Free storage after cleaning:$GREEN $STORAGE_AVAILABLE $RESET \n"
 }
 
 function 42-wizzard-storage() {
+	# displaying total storage
 	printf "$BLUE• Total storage: $(df -h | grep "$USER" | awk '{print($2)}' | tr 'i' 'B') $RESET \n"
+	# displaying used storage
 	printf "$RED• Used storage:  $(df -h | grep "$USER" | awk '{print($3)}' | tr 'i' 'B') $RESET \n"
+	# displaying available storage
 	printf "$GREEN• Available storage:  $(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B') $RESET \n"
 }
 
 function 42-wizzard-brew() {
-	rm -rf $HOME/.brew
-	printf "$BLUE Clonning repo... $RESET \n"
+	# removing brew if it exists
+	rm -rf $HOME/.brew > /dev/null 2>&1
+	# start loading animation
+	start_loading_animation "${cloning[@]}"
 	git clone --depth=1 https://github.com/Homebrew/brew $HOME/.brew > /dev/null 2>&1
-	printf "$BLUE Building... $RESET \n"
+	# stop loading animation
+	stop_loading_animation
+	# start loading animation
+	start_loading_animation "${configuring[@]}"
+	# configuring brew
 	cat > $HOME/.brewconfig.zsh <<EOL
 	# Load Homebrew config script
 	export PATH=\$HOME/.brew/bin:\$PATH
@@ -74,33 +86,44 @@ function 42-wizzard-brew() {
 		fi
 	fi
 EOL
-	printf "$BLUE Configure... $RESET \n"
 	if ! grep -q "# Load Homebrew config script" $HOME/.zshrc
 		then
 		cat >> $HOME/.zshrc <<EOL
 		source \$HOME/.brewconfig.zsh
 EOL
 	fi
+	# stop loading animation
+	stop_loading_animation
+	# start loading animation
+	start_loading_animation "${loading[@]}"
 	source $HOME/.brewconfig.zsh > /dev/null 2>&1
 	rehash > /dev/null 2>&1
 	brew update > /dev/null 2>&1
+	stop_loading_animation
+	# print brew version
 	BREW_VERSION=$(brew --version | head -n 1 | awk '{print($2)}')
 	printf "Homebrew $GREEN v$BREW_VERSION $RESET installed! \n"
 }
 
 function 42-wizzard-docker() {
-	printf "Chose a destination folder to install docker $GREEN hit enter to use goinfre(recommended) or enter a path $RESET \n"
+	printf "Chose a destination folder to install docker $GREEN hit enter to use goinfre(recommended)$RESET \n"
+	# read docker destination folder
 	read -e docker_destination
+	# if user didn't choose a folder, use goinfre
 	if [ -z "$docker_destination" ]
 		then
 		docker_destination="/goinfre/$USER/docker"
 	fi
+	# uninstalling docker if it exists
 	brew uninstall -f docker docker-compose docker-machine > /dev/null 2>&1
+	# check if docker is installed
 	if [ ! -d "/Applications/Docker.app" ] && [ ! -d "~/Applications/Docker.app" ]; then
 		printf "$YELLOW Docker is not installed $RESET \n"
 		printf "Please install docker trough $BLUE Managed Software Center $RESET then hit enter to continue \n"
 		open -a "Managed Software Center"
+		start_loading_animation "${waiting[@]}"
 		read -n 1
+		stop_loading_animation
 	fi
 	pkill Docker 2> /dev/null
 	unlink ~/Library/Containers/com.docker.docker > /dev/null 2>&1
@@ -125,19 +148,23 @@ function 42-wizzard-code() {
 }
 
 function 42-wizzard-ssh() {
+	start_loading_animation "${loading[@]}"
 	/bin/rm -rf $HOME/.ssh
 	ssh-keygen -C "" -f ~/.ssh/id_rsa -N "" > /dev/null 2>&1
 	cat ~/.ssh/id_rsa.pub | awk '{print($2)}' | pbcopy
-	printf "$GREEN SSH key copied to clipboard $RESET \n"
-	printf "You can add it to your intranet account trought the following link: $BLUE (link will be oppend in 5 sec...) $RESET \n"
-	printf "$BLUE https://profile.intra.42.fr/gitlab_users $RESET"
 	sleep 2
+	stop_loading_animation
+	printf "$GREEN SSH key copied to clipboard $RESET \n"
+	printf "$BLUE https://profile.intra.42.fr/gitlab_users $RESET"
+	sleep 1
 	open https://profile.intra.42.fr/gitlab_users
 }
 
 function 42-wizzard-nvm() {
+	start_loading_animation "${installing[@]}"
 	curl -fsSL https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | zsh > /dev/null 2>&1
-	source $HOME/.nvm/nvm.sh
+	source $HOME/.nvm/nvm.sh > /dev/null 2>&1
+	stop_loading_animation
 	NVM_VERSION=$(nvm --version)
 	printf "nvm $GREEN v$NVM_VERSION $RESET installed! \n"
 }
@@ -145,11 +172,15 @@ function 42-wizzard-nvm() {
 function 42_node() {
 	if which nvm > /dev/null
 		then
+		start_loading_animation "${installing[@]}"
 		nvm install node
+		stop_loading_animation
 	else
 		printf "Installing nvm first..."
 		42-wizzard-nvm
+		start_loading_animation "${installing[@]}"
 		nvm install node > /dev/null 2>&1
+		stop_loading_animation
 		NODE_VERSION=$(node --version)
 		NPM_VERSION=$(npm --version)
 		printf "node $GREEN v$NODE_VERSION $RESET installed! \n"

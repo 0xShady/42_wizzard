@@ -1,73 +1,86 @@
 #!/bin/zsh
 
-animation_frame_interval=0.2
+animation_frame_interval=0.3
 
 # loadig animation arrays
-classic=('-' "\\" '|' '/' )
+classic=('-' "\\" '|' '/')
 
-metro=( '[                        ]'
-        '[=                       ]'
-        '[==                      ]'
-        '[===                     ]'
-        '[====                    ]'
-        '[=====                   ]'
-        '[======                  ]'
-        '[=======                 ]'
-        '[========                ]'
-        '[=========               ]'
-        '[==========              ]'
-        '[===========             ]'
-        '[============            ]'
-        '[ ============           ]'
-        '[  ============          ]'
-        '[   ============         ]'
-        '[    ============        ]'
-        '[     ============       ]'
-        '[      ============      ]'
-        '[       ============     ]'
-        '[        ============    ]'
-        '[         ============   ]'
-        '[          ============  ]'
-        '[           ============ ]'
-        '[            ============]'
-        '[             ===========]'
-        '[              ==========]'
-        '[               =========]'
-        '[                ========]'
-        '[                 =======]'
-        '[                  ======]'
-        '[                   =====]'
-        '[                    ====]'
-        '[                     ===]'
-        '[                      ==]'
-        '[                       =]' )
+cloning=( 'cloning   ' 'cloning.  ' 'cloning.. ' 'cloning...')
 
-declare -a loading_animation
+loading=('loading   ' 'loading.  ' 'loading.. ' 'loading...')
+
+waiting=('waiting   ' 'waiting.  ' 'waiting.. ' 'waiting...')
+
+installing=('installing   ' 'installing.  ' 'installing.. ' 'installing...')
+
+building=('building   ' 'building.  ' 'building.. ' 'building...')
+
+configuring=('configuring   ' 'configuring.  ' 'configuring.. ' 'configuring...')
+
+cleaning=('cleaning   ' 'cleaning.  ' 'cleaning.. ' 'cleaning...')
+
+metro=(	'[                        ]'
+		'[=                       ]'
+		'[==                      ]'
+		'[===                     ]'
+		'[====                    ]'
+		'[=====                   ]'
+		'[======                  ]'
+		'[=======                 ]'
+		'[========                ]'
+		'[=========               ]'
+		'[==========              ]'
+		'[===========             ]'
+		'[============            ]'
+		'[ ============           ]'
+		'[  ============          ]'
+		'[   ============         ]'
+		'[    ============        ]'
+		'[     ============       ]'
+		'[      ============      ]'
+		'[       ============     ]'
+		'[        ============    ]'
+		'[         ============   ]'
+		'[          ============  ]'
+		'[           ============ ]'
+		'[            ============]'
+		'[             ===========]'
+		'[              ==========]'
+		'[               =========]'
+		'[                ========]'
+		'[                 =======]'
+		'[                  ======]'
+		'[                   =====]'
+		'[                    ====]'
+		'[                     ===]'
+		'[                      ==]'
+		'[                       =]' )
+
+declare -a BLA_active_loading_animation
 
 play_loading_animation_loop() {
-  while true ; do
-    for frame in "${loading_animation[@]}" ; do
-      printf "\r%s" "${frame}"
-      sleep 0.1
-    done
-  done
+	while true ; do
+		for frame in "${active_loading_animation[@]}" ; do
+			printf "\r%s" "${frame}"
+			sleep $animation_frame_interval
+		done
+	done
 }
 
 start_loading_animation() {
-  loading_animation=( "${@}" )
-  # echo ${loading_animation[@]}
-  # echo "BLA_active_loading_animation: ${BLA_active_loading_animation[@]}"
-  # Extract the delay between each frame from array BLA_active_loading_animation
-  # echo "BLA_loading_animation_frame_interval: ${BLA_loading_animation_frame_interval}"
-  #echo ${BLA_active_loading_animation[@]}
-  # exit 0
-  tput civis # Hide the terminal cursor
-  play_loading_animation_loop &
-  loading_animation_pid="${!}"
+	active_loading_animation=( "${@}" )
+	# Hide the terminal cursor
+	tput civis
+	# run loading loop on sub-shell
+	play_loading_animation_loop &
+	# get loading loop pid
+	loading_animation_pid="${!}"
 }
 
 stop_loading_animation() {
-  kill "${loading_animation_pid}" &> /dev/null
-  printf "\n"
-  tput cnorm # Restore the terminal cursor
+	# kill background process
+	kill "${loading_animation_pid}" &> /dev/null
+	printf "\n"
+	# Restore the terminal cursor
+	tput cnorm
 }
