@@ -31,6 +31,7 @@ function 42-wizzard-clean() {
 	/bin/rm -rf $HOME/Library/Application\ Support/discord/Code\ Cache/js* > /dev/null 2>&1
 	/bin/rm -rf $HOME/Library/Application\ Support/Google/Chrome/Default/Service\ Worker/CacheStorage/* > /dev/null 2>&1
 	/bin/rm -rf $HOME/Library/Application\ Support/Google/Chrome/Default/Application\ Cache/* > /dev/null 2>&1
+	sleep 2
 	# stop loading animation
 	stop_loading_animation
 	# displaying available storage after cleaning
@@ -51,7 +52,7 @@ function 42-wizzard-brew() {
 	# removing brew if it exists
 	rm -rf $HOME/.brew > /dev/null 2>&1
 	# start loading animation
-	start_loading_animation "${cloning[@]}" 2> /dev/null
+	start_loading_animation "${cloning[@]}"
 	git clone --depth=1 https://github.com/Homebrew/brew $HOME/.brew > /dev/null 2>&1
 	# stop loading animation
 	stop_loading_animation
@@ -306,7 +307,6 @@ function 42() {
 	source ~/.42-wizzard-loading.sh
 	# capture signals to stop loading animation
 	trap stop_loading_animation SIGINT
-	set +m
 	case $1 in
 		-clean|-c) 42-wizzard-clean 2> /dev/null 
 		;;
@@ -337,5 +337,4 @@ function 42() {
 		*) echo 42: "Unknown command: $1" ; 42-wizzard-help
 		;;
 	esac
-	set -m
 }
