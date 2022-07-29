@@ -56,7 +56,7 @@ metro=(	'[                        ]'
 		'[                      ==]'
 		'[                       =]' )
 
-declare -a BLA_active_loading_animation
+declare -a active_loading_animation
 
 play_loading_animation_loop() {
 	while true ; do
@@ -71,6 +71,7 @@ start_loading_animation() {
 	active_loading_animation=( "${@}" )
 	# Hide the terminal cursor
 	tput civis
+	set +m
 	# run loading loop on sub-shell
 	play_loading_animation_loop &
 	# get loading loop pid
@@ -79,8 +80,9 @@ start_loading_animation() {
 
 stop_loading_animation() {
 	# kill background process
-	kill "${loading_animation_pid}" &> /dev/null
+	kill "${loading_animation_pid}" 2> /dev/null
 	printf "\n"
 	# Restore the terminal cursor
 	tput cnorm
+	set -m
 }
