@@ -4,9 +4,9 @@
 
 sed -n '/42-wizzard/!p' ~/.zshrc > .tmp && mv .tmp ~/.zshrc
 
-curl -fsSL https://raw.githubusercontent.com/0xShady/42_wizzard/dev/42-wizzard.sh > ~/.42-wizzard.sh
-curl -fsSL https://raw.githubusercontent.com/0xShady/42_wizzard/dev/assistance/42-wizzard-updater.sh > ~/.42-wizzard-updater.sh
-curl -fsSL https://raw.githubusercontent.com/0xShady/42_wizzard/dev/assistance/42-wizzard-loading.sh > ~/.42-wizzard-loading.sh
+curl -fsSL https://raw.githubusercontent.com/0xShady/42_wizzard/main/42-wizzard.sh > ~/.42-wizzard.sh
+curl -fsSL https://raw.githubusercontent.com/0xShady/42_wizzard/main/assistance/42-wizzard-updater.sh > ~/.42-wizzard-updater.sh
+curl -fsSL https://raw.githubusercontent.com/0xShady/42_wizzard/main/assistance/42-wizzard-loading.sh > ~/.42-wizzard-loading.sh
 
 chmod +x ~/.42-wizzard.sh
 chmod +x ~/.42-wizzard-updater.sh
