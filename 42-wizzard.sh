@@ -10,21 +10,14 @@ YELLOW="\e[1;33m"
 BLUE="\e[1;34m"
 MAGENTA="\e[1;35m"
 CYAN="\e[1;36m"
-VERSION="1.2.0"
-
-source ./assistance/42-wizzard-loading.sh
-trap stop_loading_animation SIGINT
-
-start_loading_animation "${waiting[@]}"
-read -n 1
-stop_loading_animation
+VERSION="1.8.0"
 
 function 42-wizzard-clean() {
 	# displaying available storage before cleaning
 	STORAGE_AVAILABLE=$(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B')
 	printf "• Free storage before cleaning:$GREEN $STORAGE_AVAILABLE $RESET \n"
 	# start loading animation
-	start_loading_animation "${cleaning[@]}"
+	start_loading_animation "${cleaning[@]}" 2> /dev/null
 	# cleaning
 	/bin/rm -rf $HOME/.Trash/* > /dev/null 2>&1
 	/bin/rm -rf $HOME/Library/*.42* > /dev/null 2>&1
@@ -58,12 +51,12 @@ function 42-wizzard-brew() {
 	# removing brew if it exists
 	rm -rf $HOME/.brew > /dev/null 2>&1
 	# start loading animation
-	start_loading_animation "${cloning[@]}"
+	start_loading_animation "${cloning[@]}" 2> /dev/null
 	git clone --depth=1 https://github.com/Homebrew/brew $HOME/.brew > /dev/null 2>&1
 	# stop loading animation
 	stop_loading_animation
 	# start loading animation
-	start_loading_animation "${configuring[@]}"
+	start_loading_animation "${metro[@]}" 2> /dev/null
 	# configuring brew
 	cat > $HOME/.brewconfig.zsh <<EOL
 	# Load Homebrew config script
@@ -95,7 +88,7 @@ EOL
 	# stop loading animation
 	stop_loading_animation
 	# start loading animation
-	start_loading_animation "${loading[@]}"
+	start_loading_animation "${metro[@]}" 2> /dev/null
 	source $HOME/.brewconfig.zsh > /dev/null 2>&1
 	rehash > /dev/null 2>&1
 	brew update > /dev/null 2>&1
@@ -121,66 +114,95 @@ function 42-wizzard-docker() {
 		printf "$YELLOW Docker is not installed $RESET \n"
 		printf "Please install docker trough $BLUE Managed Software Center $RESET then hit enter to continue \n"
 		open -a "Managed Software Center"
-		start_loading_animation "${waiting[@]}"
+		start_loading_animation "${waiting[@]}" 2> /dev/null
 		read -n 1
 		stop_loading_animation
 	fi
+	# killing all docker processes
 	pkill Docker 2> /dev/null
+	# unlinking docker from /Applications
 	unlink ~/Library/Containers/com.docker.docker > /dev/null 2>&1
 	unlink ~/Library/Containers/com.docker.helper > /dev/null 2>&1
 	unlink ~/.docker > /dev/null 2>&1
 	unlink ~/Library/Containers/com.docker.docker > /dev/null 2>&1
 	unlink ~/Library/Containers/com.docker.helper > /dev/null 2>&1
 	unlink ~/.docker > /dev/null 2>&1
+	# removing docker old folders
 	/bin/rm -rf ~/Library/Containers/com.docker.{docker,helper} ~/.docker > /dev/null 2>&1
+	# creating docker destination folder
 	mkdir -p "$docker_destination"/{com.docker.{docker,helper},.docker} > /dev/null 2>&1
+	# linking docker to destination folder
 	ln -sf "$docker_destination"/com.docker.docker ~/Library/Containers/com.docker.docker > /dev/null 2>&1
 	ln -sf "$docker_destination"/com.docker.helper ~/Library/Containers/com.docker.helper > /dev/null 2>&1
 	ln -sf "$docker_destination"/.docker ~/.docker > /dev/null 2>&1
 	printf "Docker installed in $GREEN $docker_destination $RESET \n"
+	# opening docker app
 	open -g -a Docker
 }
 
 function 42-wizzard-code() {
+	# appending an alias to zshrc
 	echo 'code () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;}' >> $HOME/.zshrc
+	# source zshrc
 	source $HOME/.zshrc
 	printf $GREEN "You can use the code command now!" $RESET
 }
 
 function 42-wizzard-ssh() {
+	# starting loading animation
 	start_loading_animation "${loading[@]}"
+	# removing old keys if it exists
 	/bin/rm -rf $HOME/.ssh
+	# creating new keys
 	ssh-keygen -C "" -f ~/.ssh/id_rsa -N "" > /dev/null 2>&1
+	# copying public key to clipboard
 	cat ~/.ssh/id_rsa.pub | awk '{print($2)}' | pbcopy
 	sleep 2
+	# stopping loading animation
 	stop_loading_animation
 	printf "$GREEN SSH key copied to clipboard $RESET \n"
 	printf "$BLUE https://profile.intra.42.fr/gitlab_users $RESET"
 	sleep 1
+	# opening gitlab profile to add ssh key
 	open https://profile.intra.42.fr/gitlab_users
 }
 
 function 42-wizzard-nvm() {
-	start_loading_animation "${installing[@]}"
+	# starting loading animation
+	start_loading_animation "${installing[@]}" 2> /dev/null
+	# installing nvm
 	curl -fsSL https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | zsh > /dev/null 2>&1
+	# source nvm
 	source $HOME/.nvm/nvm.sh > /dev/null 2>&1
+	# stopping loading animation
 	stop_loading_animation
+	# print nvm version
 	NVM_VERSION=$(nvm --version)
 	printf "nvm $GREEN v$NVM_VERSION $RESET installed! \n"
 }
 
 function 42_node() {
+	# checking if nvm is installed
 	if which nvm > /dev/null
 		then
-		start_loading_animation "${installing[@]}"
+		# starting loading animation
+		start_loading_animation "${installing[@]}" 2> /dev/null
+		# installing node
 		nvm install node
+		# stopping loading animation
 		stop_loading_animation
 	else
-		printf "Installing nvm first..."
+		printf "$RED nvm is not installed $RESET \n"
+		printf "Installing nvm first"
+		# installing nvm
 		42-wizzard-nvm
-		start_loading_animation "${installing[@]}"
+		# starting loading animation
+		start_loading_animation "${installing[@]}" 2> /dev/null
+		# installing node
 		nvm install node > /dev/null 2>&1
+		# stopping loading animation
 		stop_loading_animation
+		# print node + npm versions
 		NODE_VERSION=$(node --version)
 		NPM_VERSION=$(npm --version)
 		printf "node $GREEN v$NODE_VERSION $RESET installed! \n"
@@ -189,56 +211,81 @@ function 42_node() {
 }
 
 function 42-wizzard-oh-my-zsh() {
+	# checking if oh-my-zsh is installed
 	if [ ! -d "$HOME/.oh-my-zsh" ]
 		then
+		# starting loading animation
+		start_loading_animation "${installing[@]}" 2> /dev/null
+		# installing oh-my-zsh
 		sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" > /dev/null 2>&1
-		source $HOME/.zshrc
+		# source zshrc
+		source $HOME/.zshrc > /dev/null 2>&1
+		# stopping loading animation
+		stop_loading_animation
+		# print oh-my-zsh version
 		printf "$GREEN Oh My Zsh $RESET installed! \n"
 	fi
 }
 
 function 42-wizzard-reset() {
+	# check for user input
 	printf "$RED Are you sure you want to reset your session? $RESET (yes/no)\n"
 	read -r answer
+	# if user input is yes
 	if [ "$answer" = "yes" ]
 		then
+		# resetting session
 		touch $HOME/.reset
+		touch $HOME/.reset_Library
+		# logging out
 		osascript -e 'tell application "loginwindow" to  «event aevtrlgo»'
 	else
+		# aborting reset
 		printf "$YELLOW Aborting \n"
 	fi
 }
 
 function 42-wizzard-ds-store () {
+	# check for user input
 	printf "$YELLOW Are you sure you want to remove .DS_Store files? $RESET (yes/no) \n"
 	read -r answer
+	# if user input is yes
 	if [ "$answer" = "yes" ]
 		then
 		cd $HOME
+		# starting loading animation
+		start_loading_animation "${cleaning[@]}" 2> /dev/null
+		# removing .DS_Store files
 		find . -name .DS_Store -delete > /dev/null 2>&1
+		# stopping loading animation
+		stop_loading_animation
+		cd - > /dev/null 2>&1
 	else
+		# aborting delete
 		printf "$YELLOW Aborting \n"
 	fi
+	# check for user input
 	printf "$YELLOW Are you sure you want to prevent your os from creating .DS_Store files? $RESET (yes/no) \n"
 	read -r answer
+	# if user input is yes
 	if [ "$answer" = "yes" ]
 		then
+		# preventing os from creating .DS_Store files
 		defaults write com.apple.desktopservices DSDontWriteNetworkStores true
 	else
+		# aborting prevent
 		printf "$YELLOW Aborting \n"
 	fi
-	cd - > /dev/null 2>&1
 }
 
 function 42-wizzard-help() {
 	printf "42-wizzard$GREEN v$VERSION $RESET \n"
-
-	#big thanks to oummixa
+	# big thanks to Oummixa
 	if [ "$USER" = "oel-yous" ];
 		then
 		printf "hey Oummixa!! \n"
 	fi
-
+	# print help
 	printf "$GREEN	-clean -c $RESET				Clean your session. \n"
 	printf "$GREEN	-storage -s $RESET				Show your storage. \n"
 	printf "$GREEN	-brew $RESET					Install brew. \n"
@@ -248,13 +295,18 @@ function 42-wizzard-help() {
 	printf "$GREEN	-nvm $RESET					Install nvm. \n"
 	printf "$GREEN	-node $RESET					Install node. \n"
 	printf "$GREEN	-oh-my-zsh -omz $RESET			Install oh-my-zsh. \n"
-	printf "$GREEN	-ds-store $RESET				Remove .DS_Store files + prevent os from creating them. \n"
-	printf "$GREEN	-reset $RESET					Reset your session. \n"
+	printf "$GREEN	-ds-store -ds $RESET				Remove .DS_Store files + prevent os from creating them. \n"
+	printf "$GREEN	-reset -r $RESET				Reset your session. \n"
 	printf "$GREEN	-update -u $RESET				Update your the wizzard. \n"
 	printf "$GREEN	-help -h $RESET				Show this help. \n"
 }
 
 function 42() {
+	# load animation script
+	source ~/.42-wizzard-loading.sh
+	# capture signals to stop loading animation
+	trap stop_loading_animation SIGINT
+	set +m
 	case $1 in
 		-clean|-c) 42-wizzard-clean 2> /dev/null 
 		;;
@@ -272,11 +324,11 @@ function 42() {
 		;;
 		-node) 42_node 2> /dev/null
 		;;
-		-oh-my-zsh|omz) 42-wizzard-oh-my-zsh 2> /dev/null
+		-oh-my-zsh|-omz) 42-wizzard-oh-my-zsh 2> /dev/null
 		;;
-		-ds-store) 42-wizzard-ds-store
+		-ds-store|-ds) 42-wizzard-ds-store
 		;;
-		-reset) 42-wizzard-reset
+		-reset|-r) 42-wizzard-reset
 		;;
 		-update|-u) sh ~/.42-wizzard-updater.sh
 		;;
@@ -285,4 +337,5 @@ function 42() {
 		*) echo 42: "Unknown command: $1" ; 42-wizzard-help
 		;;
 	esac
+	set -m
 }
