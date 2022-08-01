@@ -1,6 +1,6 @@
 # 42_wizzard
 
-The set of tools you don't you don't know you need it.
+The set of tools you don't know you need it.
 </br>
 
 ## Installiation
