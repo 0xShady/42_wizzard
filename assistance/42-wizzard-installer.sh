@@ -13,7 +13,7 @@ chmod +x ~/.42-wizzard-updater.sh
 echo "source ~/.42-wizzard.sh" >> ~/.zshrc
 echo "zsh ~/.42-wizzard-updater.sh" >> ~/.zshrc
 
-WIZZARD_VERSION=$(cat ~/.42-wizzard.sh | grep "VERSION" | cut -d '"' -f 2)
+WIZZARD_VERSION=$(cat ~/.42-wizzard.sh | grep "WIZZARD_VERSION=" | cut -d '"' -f 2)
 
 echo "42 wizzard\e[1;32m v$WIZZARD_VERSION\e[0m installed"
 echo "run \e[1;32m 42 -help or -h \033[0m for more info"

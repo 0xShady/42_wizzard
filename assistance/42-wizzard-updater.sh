@@ -11,7 +11,7 @@ then
 else
 	mv ~/.tmp-wizzard $HOME/.42-wizzard.sh 2> /dev/null
 	chmod +x $HOME/.42-wizzard.sh
-	WIZZARD_VERSION=$(cat ~/.42-wizzard.sh | grep "VERSION" | cut -d '"' -f 2)
+	WIZZARD_VERSION=$(cat ~/.42-wizzard.sh | grep "WIZZARD_VERSION=" | cut -d '"' -f 2)
 	echo "42 wizzard updated to $GREEN v$WIZZARD_VERSION $RESET"
 fi
 
