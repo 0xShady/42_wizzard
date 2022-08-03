@@ -10,7 +10,94 @@ YELLOW="\e[1;33m"
 BLUE="\e[1;34m"
 MAGENTA="\e[1;35m"
 CYAN="\e[1;36m"
-VERSION="1.8.0"
+WIZZARD_VERSION="2.0.0"
+ANIMATION_RATE=0.3
+declare -a ACTIVE_LOADING
+
+# loadig animation arrays
+classic=('-' "\\" '|' '/')
+
+cloning=( 'cloning   ' 'cloning.  ' 'cloning.. ' 'cloning...')
+
+loading=('loading   ' 'loading.  ' 'loading.. ' 'loading...')
+
+waiting=('waiting   ' 'waiting.  ' 'waiting.. ' 'waiting...')
+
+installing=('installing   ' 'installing.  ' 'installing.. ' 'installing...')
+
+building=('building   ' 'building.  ' 'building.. ' 'building...')
+
+configuring=('configuring   ' 'configuring.  ' 'configuring.. ' 'configuring...')
+
+cleaning=('cleaning   ' 'cleaning.  ' 'cleaning.. ' 'cleaning...')
+metro=(	'[                        ]'
+		'[=                       ]'
+		'[==                      ]'
+		'[===                     ]'
+		'[====                    ]'
+		'[=====                   ]'
+		'[======                  ]'
+		'[=======                 ]'
+		'[========                ]'
+		'[=========               ]'
+		'[==========              ]'
+		'[===========             ]'
+		'[============            ]'
+		'[ ============           ]'
+		'[  ============          ]'
+		'[   ============         ]'
+		'[    ============        ]'
+		'[     ============       ]'
+		'[      ============      ]'
+		'[       ============     ]'
+		'[        ============    ]'
+		'[         ============   ]'
+		'[          ============  ]'
+		'[           ============ ]'
+		'[            ============]'
+		'[             ===========]'
+		'[              ==========]'
+		'[               =========]'
+		'[                ========]'
+		'[                 =======]'
+		'[                  ======]'
+		'[                   =====]'
+		'[                    ====]'
+		'[                     ===]'
+		'[                      ==]'
+		'[                       =]' )
+
+
+function play_loading_animation_loop() {
+	while true ; do
+		for FRAME in "${ACTIVE_LOADING[@]}" ; do
+			printf "\r%s" "${FRAME}"
+			sleep $ANIMATION_RATE
+		done
+	done
+}
+
+function start_loading_animation() {
+	ACTIVE_LOADING=( "${@}" )
+	# Hide the terminal cursor
+	tput civis
+	# disable terminal monitoring
+	set +m
+	# run loading loop on sub-shell
+	play_loading_animation_loop &
+	# get loading loop pid
+	LOADING_LOOP_PID="${!}"
+}
+
+function stop_loading_animation() {
+	# kill background process
+	kill "${LOADING_LOOP_PID}" 2> /dev/null
+	printf "\n"
+	# Restore the terminal cursor
+	tput cnorm
+	# enable terminal monitoring back
+	set -m
+}
 
 function 42-wizzard-clean() {
 	# displaying available storage before cleaning
@@ -231,9 +318,9 @@ function 42-wizzard-oh-my-zsh() {
 function 42-wizzard-reset() {
 	# check for user input
 	printf "$RED Are you sure you want to reset your session? $RESET (yes/no)\n"
-	read -r answer
+	read -r ANSWER
 	# if user input is yes
-	if [ "$answer" = "yes" ]
+	if [ "$ANSWER" = "yes" ]
 		then
 		# resetting session
 		touch $HOME/.reset
@@ -249,9 +336,9 @@ function 42-wizzard-reset() {
 function 42-wizzard-ds-store () {
 	# check for user input
 	printf "$YELLOW Are you sure you want to remove .DS_Store files? $RESET (yes/no) \n"
-	read -r answer
+	read -r ANSWER
 	# if user input is yes
-	if [ "$answer" = "yes" ]
+	if [ "$ANSWER" = "yes" ]
 		then
 		cd $HOME
 		# starting loading animation
@@ -267,9 +354,9 @@ function 42-wizzard-ds-store () {
 	fi
 	# check for user input
 	printf "$YELLOW Are you sure you want to prevent your os from creating .DS_Store files? $RESET (yes/no) \n"
-	read -r answer
+	read -r ANSWER
 	# if user input is yes
-	if [ "$answer" = "yes" ]
+	if [ "$ANSWER" = "yes" ]
 		then
 		# preventing os from creating .DS_Store files
 		defaults write com.apple.desktopservices DSDontWriteNetworkStores true
@@ -280,7 +367,7 @@ function 42-wizzard-ds-store () {
 }
 
 function 42-wizzard-help() {
-	printf "42-wizzard$GREEN v$VERSION $RESET \n"
+	echo "42-wizzard$GREEN v$WIZZARD_VERSION $RESET"
 	# big thanks to Oummixa
 	if [ "$USER" = "oel-yous" ];
 		then
@@ -303,9 +390,6 @@ function 42-wizzard-help() {
 }
 
 function 42() {
-	# load animation script
-	source ~/.42-wizzard-loading.sh
-	# capture signals to stop loading animation
 	trap stop_loading_animation SIGINT
 	case $1 in
 		-clean|-c) 42-wizzard-clean 2> /dev/null 
