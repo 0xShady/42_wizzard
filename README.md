@@ -17,41 +17,46 @@ curl -fsSL https://raw.githubusercontent.com/0xShady/42_wizzard/main/assistance/
 
 | Commands | Functionalities | 
 | --------------- | --------------- 
-| ```-clean``` | Cleans your session |
-| ```-storage``` | Shows storaage stats |
+| ```-clean \| -c``` | Cleans your session |
+| ```-storage \| -s``` | Shows storaage stats |
 | ```-brew``` | Install brew without permessions |
 | ```-docker``` | Install docker in desired directory |
 | ```-code``` | Add the code command to your zsh |
 | ```-ssh``` | Generates ssh key and copies it toy your clipboard |
+| ```-pip``` | Install nvm |
 | ```-nvm``` | Install nvm |
 | ```-node``` | Install node + npm |
 | ```-oh-my-zsh``` | Install oh-my-zsh |
-| ```-ds-store``` | remove .DS_Store files + prevent os from creating them |
-| ```-reset``` |Resets your session |
-| ```-help``` | Shows the list of valid commands |
+| ```-ds-store \| -ds``` | remove .DS_Store files + prevent os from creating them |
+| ```-reset \| -r``` | Resets your session |
+| ```-update \| -u``` | Updates your wizzard|
+| ```-help \| -h``` | Shows the list of valid commands |
 
 ## How to use
 
 42 followed with one of the valid commands above.
 
 ```bash
-42 -help
+42 -h
 ```
 
 output:
 
 ```bash 
- -clean       clean your session
- -storage     show your storage
- -brew        install brew
- -docker      install docker
- -code        add code command to your zsh
- -ssh         generate ssh key
- -nvm         install nvm
- -node        install node
- -oh-my-zsh   install oh-my-zsh
- -ds-store    remove .DS_Store files + prevent os from creating them
- -reset       reset your session
- -help        show this help
+42-wizzard v2.0.0 
+        -clean -c                               Clean your session. 
+        -storage -s                             Show your storage. 
+        -brew                                   Install brew. 
+        -docker                                 Install docker. 
+        -code                                   Add code command to your zsh. 
+        -ssh                                    Generate ssh key. 
+        -nvm                                    Install nvm. 
+        -pip                                    Install pip. 
+        -node                                   Install node. 
+        -oh-my-zsh -omz                         Install oh-my-zsh. 
+        -ds-store -ds                           Remove .DS_Store files + prevent os from creating them. 
+        -reset -r                               Reset your session. 
+        -update -u                              Update your the wizzard. 
+        -help -h                                Show this help. 
 ```
 
