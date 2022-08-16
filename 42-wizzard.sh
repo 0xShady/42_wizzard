@@ -366,6 +366,22 @@ function 42-wizzard-ds-store () {
 	fi
 }
 
+function 42-wizzard-pip() {
+	start_loading_animation "${installing[@]}" 2> /dev/null
+	curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py > /dev/null 2>&1
+	python3 get-pip.py > /dev/null 2>&1
+	rm get-pip.py > /dev/null 2>&1
+	echo "alias pip='pip3'" >> $HOME/.zshrc
+	source $HOME/.zshrc > /dev/null 2>&1
+	stop_loading_animation
+	if which pip > /dev/null
+		then
+		printf "$GREEN Pip $RESET installed! \n"
+	else
+		printf "$RED Pip $RESET not installed! \n"
+	fi
+}
+
 function 42-wizzard-help() {
 	echo "42-wizzard$GREEN v$WIZZARD_VERSION $RESET"
 	# big thanks to Oummixa
@@ -381,6 +397,7 @@ function 42-wizzard-help() {
 	printf "$GREEN	-code $RESET					Add code command to your zsh. \n"
 	printf "$GREEN	-ssh $RESET					Generate ssh key. \n"
 	printf "$GREEN	-nvm $RESET					Install nvm. \n"
+	printf "$GREEN	-pip $RESET					Install pip. \n"
 	printf "$GREEN	-node $RESET					Install node. \n"
 	printf "$GREEN	-oh-my-zsh -omz $RESET			Install oh-my-zsh. \n"
 	printf "$GREEN	-ds-store -ds $RESET				Remove .DS_Store files + prevent os from creating them. \n"
@@ -405,6 +422,8 @@ function 42() {
 		-ssh) 42-wizzard-ssh
 		;;
 		-nvm) 42-wizzard-nvm 2> /dev/null
+		;;
+		-pip) 42-wizzard-pip 2> /dev/null
 		;;
 		-node) 42_node 2> /dev/null
 		;;
