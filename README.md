@@ -23,7 +23,7 @@ curl -fsSL https://raw.githubusercontent.com/0xShady/42_wizzard/main/assistance/
 | ```-docker``` | Install docker in desired directory |
 | ```-code``` | Add the code command to your zsh |
 | ```-ssh``` | Generates ssh key and copies it toy your clipboard |
-| ```-pip``` | Install nvm |
+| ```-pip``` | Install pip |
 | ```-nvm``` | Install nvm |
 | ```-node``` | Install node + npm |
 | ```-oh-my-zsh``` | Install oh-my-zsh |
