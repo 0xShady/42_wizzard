@@ -138,52 +138,21 @@ function 42-wizzard-storage() {
 function 42-wizzard-brew() {
 	# removing brew if it exists
 	rm -rf $HOME/.brew > /dev/null 2>&1
-	# start loading animation
-	start_loading_animation "${cloning[@]}"
-	git clone --depth=1 https://github.com/Homebrew/brew $HOME/.brew > /dev/null 2>&1
-	# stop loading animation
-	stop_loading_animation
-	# start loading animation
-	start_loading_animation "${metro[@]}" 2> /dev/null
-	# configuring brew
-	cat > $HOME/.brewconfig.zsh <<EOL
-	# Load Homebrew config script
-	export PATH=\$HOME/.brew/bin:\$PATH
-	export HOMEBREW_CACHE=/tmp/\$USER/Homebrew/Caches
-	export HOMEBREW_TEMP=/tmp/\$USER/Homebrew/Temp
-	mkdir -p \$HOMEBREW_CACHE
-	mkdir -p \$HOMEBREW_TEMP
-	if df -T autofs,nfs \$HOME 1>/dev/null
-		then
-		HOMEBREW_LOCKS_TARGET=/tmp/\$USER/Homebrew/Locks
-		HOMEBREW_LOCKS_FOLDER=\$HOME/.brew/var/homebrew
-		mkdir -p \$HOMEBREW_LOCKS_TARGET
-		mkdir -p \$HOMEBREW_LOCKS_FOLDER
-		if ! [[ -L \$HOMEBREW_LOCKS_FOLDER && -d \$HOMEBREW_LOCKS_FOLDER ]]
-			then
-			echo "Creating symlink for Locks folder"
-			rm -rf \$HOMEBREW_LOCKS_FOLDER
-			ln -s \$HOMEBREW_LOCKS_TARGET \$HOMEBREW_LOCKS_FOLDER
-		fi
-	fi
-EOL
-	if ! grep -q "# Load Homebrew config script" $HOME/.zshrc
-		then
-		cat >> $HOME/.zshrc <<EOL
-		source \$HOME/.brewconfig.zsh
-EOL
-	fi
-	# stop loading animation
-	stop_loading_animation
-	# start loading animation
-	start_loading_animation "${metro[@]}" 2> /dev/null
-	source $HOME/.brewconfig.zsh > /dev/null 2>&1
-	rehash > /dev/null 2>&1
+	rm -rf $HOME/goinfre/homebrew > /dev/null 2>&1
+	sed -n '/export PATH=/!p' ~/.zshrc > .tmp && mv .tmp ~/.zshrc
+	start_loading_animation "${installing[@]}" 2> /dev/null
+	cd ~/goinfre
+	mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew > /dev/null 2>&1
+	echo "export PATH=~/goinfre/homebrew/bin:$PATH" >> $HOME/.zshrc
+	source $HOME/.zshrc > /dev/null 2>&1
+	# brew update
 	brew update > /dev/null 2>&1
+	# stop loading animation
 	stop_loading_animation
 	# print brew version
 	BREW_VERSION=$(brew --version | head -n 1 | awk '{print($2)}')
 	printf "Homebrew $GREEN v$BREW_VERSION $RESET installed! \n"
+	cd - > /dev/null 2>&1
 }
 
 function 42-wizzard-docker() {
@@ -367,13 +336,20 @@ function 42-wizzard-ds-store () {
 }
 
 function 42-wizzard-pip() {
+	#starting loading animation
 	start_loading_animation "${installing[@]}" 2> /dev/null
+	# curling pip
 	curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py > /dev/null 2>&1
+	# bulding pip
 	python3 get-pip.py > /dev/null 2>&1
 	rm get-pip.py > /dev/null 2>&1
+	# make alias for pip
 	echo "alias pip='pip3'" >> $HOME/.zshrc
+	# source zshrc
 	source $HOME/.zshrc > /dev/null 2>&1
+	# stopping loading animation
 	stop_loading_animation
+	# print pip version
 	if which pip > /dev/null
 		then
 		printf "$GREEN Pip $RESET installed! \n"
