@@ -414,7 +414,7 @@ function 42-wizzard-init() {
 	# check if blueutil is installed
 	if which blueutil > /dev/null
 		then
-		slepp 1
+		sleep 1
 	else
 		if which brew > /dev/null
 			then
@@ -430,15 +430,25 @@ function 42-wizzard-init() {
 	# set theme to dark if dark is set in .42-env
 	if [ $THEME = "dark" ]
 		then
+		echo "setting theme to dark"
 		osascript -e 'tell app "System Events" to tell appearance preferences to set dark mode to true'
 	fi
 	# activate bluetooth
+	echo "activating bluetooth..."
 	blueutil -p 1 > /dev/null 2>&1
 	sleep 3
 	bt=$(blueutil --is-connected "$BLUETOOTH")
 	if [ $bt = 0 ]
 		then
 		blueutil --connect "$BLUETOOTH" > /dev/null 2>&1
+		if [ $? -eq 0 ]
+			then
+			echo "$GREEN $BLUETOOTH connected!"
+		else
+			echo "$RED cannot connecte to $BLUETOOTH"
+		fi
+	else
+		echo "$GREEN $BLUETOOTH is already connected! \n"
 	fi
 }
 
