@@ -136,7 +136,7 @@ function 42-wizzard-storage() {
 	# displaying heavy files
 	cd
 	echo "$YELLOW Heavy files: $RESET"
-	find . -type f -size +50M -exec ls -lh {} \; 2> /dev/null | sort -k 5 -nrh | awk '{print $9  $10  " " "\033[32m" $5 "\033[0m" }' | column -t
+	find . -size +50M -exec ls -lh {} \; 2> /dev/null | sort -k 5 -nr | awk '{print $9  $10  " " "\033[32m" $5 "\033[0m" }' | column -t
 	cd - > /dev/null 2>&1
 }
 
