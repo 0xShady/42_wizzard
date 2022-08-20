@@ -136,20 +136,19 @@ function 42-wizzard-storage() {
 }
 
 function 42-wizzard-brew() {
-	# removing brew if it exists
+	if which brew > /dev/null 2>&1 
+		then
+		echo "brew is already installed"
+		exit 0
+	fi
+	echo "installing brew"
 	rm -rf $HOME/.brew > /dev/null 2>&1
 	rm -rf $HOME/goinfre/homebrew > /dev/null 2>&1
-	sed -n '/export PATH=/!p' ~/.zshrc > .tmp && mv .tmp ~/.zshrc
-	start_loading_animation "${installing[@]}" 2> /dev/null
 	cd ~/goinfre
 	mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew > /dev/null 2>&1
 	echo "export PATH=~/goinfre/homebrew/bin:$PATH" >> $HOME/.zshrc
 	source $HOME/.zshrc > /dev/null 2>&1
-	# brew update
 	brew update > /dev/null 2>&1
-	# stop loading animation
-	stop_loading_animation
-	# print brew version
 	BREW_VERSION=$(brew --version | head -n 1 | awk '{print($2)}')
 	printf "Homebrew $GREEN v$BREW_VERSION $RESET installed! \n"
 	cd - > /dev/null 2>&1
