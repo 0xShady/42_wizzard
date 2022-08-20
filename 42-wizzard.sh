@@ -10,7 +10,7 @@ YELLOW="\e[1;33m"
 BLUE="\e[1;34m"
 MAGENTA="\e[1;35m"
 CYAN="\e[1;36m"
-WIZZARD_VERSION="2.0.0"
+WIZZARD_VERSION="2.5.0"
 ANIMATION_RATE=0.3
 declare -a ACTIVE_LOADING
 
@@ -128,34 +128,58 @@ function 42-wizzard-clean() {
 
 function 42-wizzard-storage() {
 	# displaying total storage
-	printf "$BLUE• Total storage: $(df -h | grep "$USER" | awk '{print($2)}' | tr 'i' 'B') $RESET \n"
+	echo "• Total storage: $BLUE $(df -h | grep "$USER" | awk '{print($2)}' | tr 'i' 'B') $RESET"
 	# displaying used storage
-	printf "$RED• Used storage:  $(df -h | grep "$USER" | awk '{print($3)}' | tr 'i' 'B') $RESET \n"
+	echo "• Used storage: $RED $(df -h | grep "$USER" | awk '{print($3)}' | tr 'i' 'B') $RESET"
 	# displaying available storage
-	printf "$GREEN• Available storage:  $(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B') $RESET \n"
+	echo "• Available storage: $GREEN $(df -h | grep "$USER" | awk '{print($4)}' | tr 'i' 'B') $RESET"
+	# displaying heavy files
+	cd
+	echo "$YELLOW Heavy files: $RESET"
+	find . -type f -size +50M -exec ls -lh {} \; 2> /dev/null | sort -k 5 -nrh | awk '{print $9  $10  " " "\033[32m" $5 "\033[0m" }' | column -t
+	cd - > /dev/null 2>&1
 }
 
 function 42-wizzard-brew() {
+	# check if brew is installed
 	if which brew > /dev/null 2>&1 
 		then
-		echo "brew is already installed"
-		exit 0
+		BREW_VERSION=$(brew --version | head -n 1 | awk '{print($2)}' | cut -d'-' -f1)
+		echo "Brew is $GREEN $BREW_VERSION $RESET already installed"
+		echo "Do you want to reinstall it? (yes/no)"
+		read -r ANSWER
+		if [ "$ANSWER" != "yes" ]
+		then
+			exit 0
+		fi
 	fi
 	echo "installing brew"
+	# start loading animation
+	start_loading_animation "${metro[@]}" 2> /dev/null
+	cd ~/goinfre
+	# remove old brew
 	rm -rf $HOME/.brew > /dev/null 2>&1
 	rm -rf $HOME/goinfre/homebrew > /dev/null 2>&1
-	cd ~/goinfre
-	mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew > /dev/null 2>&1
+	# clean .zshrc
+	sed -n '/brew/!p' ~/.zshrc > .tmp && mv .tmp ~/.zshrc
+	# curl brew
+	mkdir homebrew && curl -sL https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew > /dev/null 2>&1
+	# add brew to .zshrc
 	echo "export PATH=~/goinfre/homebrew/bin:$PATH" >> $HOME/.zshrc
+	# source .zshrc
 	source $HOME/.zshrc > /dev/null 2>&1
+	# update brew
 	brew update > /dev/null 2>&1
-	BREW_VERSION=$(brew --version | head -n 1 | awk '{print($2)}')
+	# stop loading animation
+	stop_loading_animation
+	# brew version
+	BREW_VERSION=$(brew --version | head -n 1 | awk '{print($2)}' | cut -d'-' -f1)
 	printf "Homebrew $GREEN v$BREW_VERSION $RESET installed! \n"
 	cd - > /dev/null 2>&1
 }
 
 function 42-wizzard-docker() {
-	printf "Chose a destination folder to install docker $GREEN hit enter to use goinfre(recommended)$RESET \n"
+	echo "Chose a destination folder to install docker $GREEN hit enter to use goinfre(recommended)$RESET \n"
 	# read docker destination folder
 	read -e docker_destination
 	# if user didn't choose a folder, use goinfre
@@ -216,8 +240,8 @@ function 42-wizzard-ssh() {
 	sleep 2
 	# stopping loading animation
 	stop_loading_animation
-	printf "$GREEN SSH key copied to clipboard $RESET \n"
-	printf "$BLUE https://profile.intra.42.fr/gitlab_users $RESET"
+	echo "$GREEN SSH key copied to clipboard $RESET \n"
+	echo "$BLUE https://profile.intra.42.fr/gitlab_users $RESET"
 	sleep 1
 	# opening gitlab profile to add ssh key
 	open https://profile.intra.42.fr/gitlab_users
@@ -234,10 +258,10 @@ function 42-wizzard-nvm() {
 	stop_loading_animation
 	# print nvm version
 	NVM_VERSION=$(nvm --version)
-	printf "nvm $GREEN v$NVM_VERSION $RESET installed! \n"
+	echo "nvm $GREEN v$NVM_VERSION $RESET installed! \n"
 }
 
-function 42_node() {
+function  42-wizzard-node() {
 	# checking if nvm is installed
 	if which nvm > /dev/null
 		then
@@ -248,8 +272,8 @@ function 42_node() {
 		# stopping loading animation
 		stop_loading_animation
 	else
-		printf "$RED nvm is not installed $RESET \n"
-		printf "Installing nvm first"
+		echo "$RED nvm is not installed $RESET \n"
+		echo "Installing nvm first"
 		# installing nvm
 		42-wizzard-nvm
 		# starting loading animation
@@ -261,8 +285,8 @@ function 42_node() {
 		# print node + npm versions
 		NODE_VERSION=$(node --version)
 		NPM_VERSION=$(npm --version)
-		printf "node $GREEN v$NODE_VERSION $RESET installed! \n"
-		printf "npm $GREEN v$NPM_VERSION $RESET installed! \n"
+		echo "node $GREEN v$NODE_VERSION $RESET installed! \n"
+		echo "npm $GREEN v$NPM_VERSION $RESET installed! \n"
 	fi
 }
 
@@ -369,6 +393,7 @@ function 42-wizzard-init() {
 			then
 			exit 0
 		fi
+		# dark theme
 		echo "Do you prefer to use the dark theme? (yes/no)"
 		read -r ANSWER
 		if [ "$ANSWER" = "yes" ]
@@ -377,6 +402,7 @@ function 42-wizzard-init() {
 		else
 			echo "THEME=light" > $HOME/.42-env
 		fi
+		# bluetooth device
 		echo "Please enter the name of your bluetooth device(Leave empty to skip)"
 		read -r ANSWER
 		if [ "$ANSWER" != "" ]
@@ -385,11 +411,10 @@ function 42-wizzard-init() {
 		fi
 		echo "Your configuration is done!"
 	fi
-
 	# check if blueutil is installed
 	if which blueutil > /dev/null
 		then
-		echo "blueutil is installed"
+		slepp 1
 	else
 		if which brew > /dev/null
 			then
@@ -400,17 +425,19 @@ function 42-wizzard-init() {
 			exit 0
 		fi
 	fi
-
+	# source .42-env
 	source $HOME/.42-env > /dev/null 2>&1
+	# set theme to dark if dark is set in .42-env
 	if [ $THEME = "dark" ]
 		then
 		osascript -e 'tell app "System Events" to tell appearance preferences to set dark mode to true'
 	fi
+	# activate bluetooth
 	blueutil -p 1 > /dev/null 2>&1
+	sleep 3
 	bt=$(blueutil --is-connected "$BLUETOOTH")
 	if [ $bt = 0 ]
 		then
-		echo "$BLUETOOTH is not connected"
 		blueutil --connect "$BLUETOOTH" > /dev/null 2>&1
 	fi
 }
@@ -420,31 +447,38 @@ function 42-wizzard-help() {
 	# big thanks to Oummixa
 	if [ "$USER" = "oel-yous" ];
 		then
-		printf "hey Oummixa!! \n"
+		echo "hey Oummixa!!"
 	fi
 	# print help
-	printf "$GREEN	-clean -c $RESET				Clean your session. \n"
-	printf "$GREEN	-storage -s $RESET				Show your storage. \n"
-	printf "$GREEN	-brew $RESET					Install brew. \n"
-	printf "$GREEN	-docker $RESET				Install docker. \n"
-	printf "$GREEN	-code $RESET					Add code command to your zsh. \n"
-	printf "$GREEN	-ssh $RESET					Generate ssh key. \n"
-	printf "$GREEN	-nvm $RESET					Install nvm. \n"
-	printf "$GREEN	-pip $RESET					Install pip. \n"
-	printf "$GREEN	-node $RESET					Install node. \n"
-	printf "$GREEN	-oh-my-zsh -omz $RESET			Install oh-my-zsh. \n"
-	printf "$GREEN	-ds-store -ds $RESET				Remove .DS_Store files + prevent os from creating them. \n"
-	printf "$GREEN	-reset -r $RESET				Reset your session. \n"
-	printf "$GREEN	-update -u $RESET				Update your the wizzard. \n"
-	printf "$GREEN	-help -h $RESET				Show this help. \n"
+	echo "$GREEN	-clean -c $RESET				Clean your session."
+	echo "$GREEN	-storage -s $RESET				Show your storage and heavy files."
+	echo "$GREEN	-init -i $RESET				Insialize your settings and connect your device"
+	echo "$GREEN	-code $RESET					Add code command to your zsh."
+	echo "$GREEN	-ssh $RESET					Generate a new ssh key and copying it to your clipboard."
+	echo "$GREEN	-brew $RESET					Install brew."
+	echo "$GREEN	-docker $RESET				Install docker."
+	echo "$GREEN	-nvm $RESET					Install nvm."
+	echo "$GREEN	-node $RESET					Install node."
+	echo "$GREEN	-pip $RESET					Install pip."
+	echo "$GREEN	-oh-my-zsh -omz $RESET			Install oh-my-zsh."
+	echo "$GREEN	-ds-store -ds $RESET				Remove .DS_Store files, prevent os from creating them."
+	echo "$GREEN	-reset -r $RESET				Reset your session."
+	echo "$GREEN	-update -u $RESET				Update your the wizzard."
+	echo "$GREEN	-help -h $RESET				Show this help."
 }
 
 function 42() {
 	trap stop_loading_animation SIGINT
 	case $1 in
-		-clean|-c) 42-wizzard-clean 2> /dev/null 
+		-clean|-c) 42-wizzard-clean 2> /dev/null
 		;;
-		-storage|-s) 42-wizzard-storage 2> /dev/null
+		-storage|-s) 42-wizzard-storage
+		;;
+		-reset|-r) 42-wizzard-reset
+		;;
+		-update|-u) sh ~/.42-wizzard-updater.sh > /dev/null 2>&1
+		;;
+		-init|-i) 42-wizzard-init
 		;;
 		-brew) 42-wizzard-brew
 		;;
@@ -458,19 +492,15 @@ function 42() {
 		;;
 		-pip) 42-wizzard-pip 2> /dev/null
 		;;
-		-node) 42_node 2> /dev/null
+		-node) 42-wizzard-node 2> /dev/null
 		;;
 		-oh-my-zsh|-omz) 42-wizzard-oh-my-zsh 2> /dev/null
 		;;
 		-ds-store|-ds) 42-wizzard-ds-store
 		;;
-		-reset|-r) 42-wizzard-reset
-		;;
-		-update|-u) sh ~/.42-wizzard-updater.sh
-		;;
 		-help|-h) 42-wizzard-help
 		;;
-		*) echo 42: "Unknown command: $1" ; 42-wizzard-help
+		*) echo 42: "Unknown flag: $1" ; echo "Usage: 42 -flag"; 42-wizzard-help
 		;;
 	esac
 }
