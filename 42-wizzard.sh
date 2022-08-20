@@ -357,6 +357,64 @@ function 42-wizzard-pip() {
 	fi
 }
 
+function 42-wizzard-init() {
+	# check if .42-env is present
+	if [ ! -f "$HOME/.42-env" ]
+		then
+		echo "this is the first time you are using this command"
+		echo "might take a while, but it's a one time configuration"
+		echo "do you wish to continue? (yes/no)"
+		read -r ANSWER
+		if [ "$ANSWER" != "yes" ]
+			then
+			exit 0
+		fi
+		echo "Do you prefer to use the dark theme? (yes/no)"
+		read -r ANSWER
+		if [ "$ANSWER" = "yes" ]
+			then
+			echo "THEME=dark" > $HOME/.42-env
+		else
+			echo "THEME=light" > $HOME/.42-env
+		fi
+		echo "Please enter the name of your bluetooth device(Leave empty to skip)"
+		read -r ANSWER
+		if [ "$ANSWER" != "" ]
+			then
+			echo "BLUETOOTH=\"$ANSWER\"" >> $HOME/.42-env
+		fi
+		echo "Your configuration is done!"
+	fi
+
+	# check if blueutil is installed
+	if which blueutil > /dev/null
+		then
+		echo "blueutil is installed"
+	else
+		if which brew > /dev/null
+			then
+			brew install blueutil > /dev/null 2>&1
+		else
+			echo "please install brew first"
+			echo "42 -brew"
+			exit 0
+		fi
+	fi
+
+	source $HOME/.42-env > /dev/null 2>&1
+	if [ $THEME = "dark" ]
+		then
+		osascript -e 'tell app "System Events" to tell appearance preferences to set dark mode to true'
+	fi
+	blueutil -p 1 > /dev/null 2>&1
+	bt=$(blueutil --is-connected "$BLUETOOTH")
+	if [ $bt = 0 ]
+		then
+		echo "$BLUETOOTH is not connected"
+		blueutil --connect "$BLUETOOTH" > /dev/null 2>&1
+	fi
+}
+
 function 42-wizzard-help() {
 	echo "42-wizzard$GREEN v$WIZZARD_VERSION $RESET"
 	# big thanks to Oummixa
