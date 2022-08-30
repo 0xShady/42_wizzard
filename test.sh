@@ -58,7 +58,9 @@ function wizzard-select-option() {
     return $selected
 }
 
-wizzard-select-option "option 1" "option 2" "option 3"
+my_options=("option 1" "option 2" "option 3")
+
+wizzard-select-option "${my_options[@]}"
 echo "You selected: $?"
 
 # function 42-wizzard-init() {
