@@ -187,8 +187,6 @@ function 42-wizzard-docker() {
 		then
 		docker_destination="/goinfre/$USER/docker"
 	fi
-	# uninstalling docker if it exists
-	brew uninstall -f docker docker-compose docker-machine > /dev/null 2>&1
 	# check if docker is installed
 	if [ ! -d "/Applications/Docker.app" ] && [ ! -d "~/Applications/Docker.app" ]; then
 		printf "$YELLOW Docker is not installed $RESET \n"
@@ -381,77 +379,6 @@ function 42-wizzard-pip() {
 	fi
 }
 
-function 42-wizzard-init() {
-	# check if .42-env is present
-	if [ ! -f "$HOME/.42-env" ]
-		then
-		echo "this is the first time you are using this command"
-		echo "might take a while, but it's a one time configuration"
-		echo "do you wish to continue? (yes/no)"
-		read -r ANSWER
-		if [ "$ANSWER" != "yes" ]
-			then
-			exit 0
-		fi
-		# dark theme
-		echo "Do you prefer to use the dark theme? (yes/no)"
-		read -r ANSWER
-		if [ "$ANSWER" = "yes" ]
-			then
-			echo "THEME=dark" > $HOME/.42-env
-		else
-			echo "THEME=light" > $HOME/.42-env
-		fi
-		# bluetooth device
-		echo "Please enter the name of your bluetooth device(Leave empty to skip)"
-		read -r ANSWER
-		if [ "$ANSWER" != "" ]
-			then
-			echo "BLUETOOTH=\"$ANSWER\"" >> $HOME/.42-env
-		fi
-		echo "Your configuration is done!"
-	fi
-	# check if blueutil is installed
-	if which blueutil > /dev/null
-		then
-		sleep 1
-	else
-		if which brew > /dev/null
-			then
-			brew install blueutil > /dev/null 2>&1
-		else
-			echo "please install brew first"
-			echo "42 -brew"
-			exit 0
-		fi
-	fi
-	# source .42-env
-	source $HOME/.42-env > /dev/null 2>&1
-	# set theme to dark if dark is set in .42-env
-	if [ $THEME = "dark" ]
-		then
-		echo "setting theme to dark"
-		osascript -e 'tell app "System Events" to tell appearance preferences to set dark mode to true'
-	fi
-	# activate bluetooth
-	echo "activating bluetooth..."
-	blueutil -p 1 > /dev/null 2>&1
-	sleep 3
-	bt=$(blueutil --is-connected "$BLUETOOTH")
-	if [ $bt = 0 ]
-		then
-		blueutil --connect "$BLUETOOTH" > /dev/null 2>&1
-		if [ $? -eq 0 ]
-			then
-			echo "$GREEN $BLUETOOTH connected!"
-		else
-			echo "$RED cannot connecte to $BLUETOOTH"
-		fi
-	else
-		echo "$GREEN $BLUETOOTH is already connected! \n"
-	fi
-}
-
 function 42-wizzard-help() {
 	echo "42-wizzard$GREEN v$WIZZARD_VERSION $RESET"
 	# big thanks to Oummixa
@@ -462,7 +389,6 @@ function 42-wizzard-help() {
 	# print help
 	echo "$GREEN	-clean -c $RESET				Clean your session."
 	echo "$GREEN	-storage -s $RESET				Show your storage and heavy files."
-	echo "$GREEN	-init -i $RESET				Insialize your settings and connect your device"
 	echo "$GREEN	-code $RESET					Add code command to your zsh."
 	echo "$GREEN	-ssh $RESET					Generate a new ssh key and copying it to your clipboard."
 	echo "$GREEN	-brew $RESET					Install brew."
@@ -487,8 +413,6 @@ function 42() {
 		-reset|-r) 42-wizzard-reset
 		;;
 		-update|-u) sh ~/.42-wizzard-updater.sh > /dev/null 2>&1
-		;;
-		-init|-i) 42-wizzard-init
 		;;
 		-brew) 42-wizzard-brew
 		;;

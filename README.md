@@ -19,7 +19,6 @@ curl -fsSL https://raw.githubusercontent.com/0xShady/42_wizzard/main/assistance/
 | --------------- | --------------- 
 | ``` -clean -c       ``` | Clean your session.|
 | ``` -storage -s     ``` | Show your storage and heavy files.|
-| ``` -init -i        ``` | Insialize your settings and connect your device|
 | ``` -code           ``` | Add code command to your zsh.|
 | ``` -ssh            ``` | Generate a new ssh key and copying it to your clipboard.|
 | ``` -brew           ``` | Install brew.|
